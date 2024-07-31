@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: ['popaculofront.vercel.app', ' http://172.20.10.2:3000'],
+    origin: ['popaculofront.vercel.app', 'http://172.20.10.2:3000'],
     credentials: true
 }));
 
