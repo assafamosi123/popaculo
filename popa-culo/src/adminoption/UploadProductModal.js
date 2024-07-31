@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import { makeStyles } from '@mui/styles';
+import styled from '@emotion/styled';
 import axios from 'axios';
+import { DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-    dialogTitle: {
-        backgroundColor: '#8B4513',
-        color: 'white',
-    },
-    dialogContent: {
-        backgroundColor: '#FAEBD7',
-    },
-    dialogActions: {
-        backgroundColor: '#FAEBD7',
-    },
+const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
+    backgroundColor: '#8B4513',
+    color: 'white',
+}));
+
+const CustomDialogContent = styled(DialogContent)(({ theme }) => ({
+    backgroundColor: '#FAEBD7',
+}));
+
+const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
+    backgroundColor: '#FAEBD7',
 }));
 
 const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => {
-    const classes = useStyles();
     const [productName, setProductName] = useState('');
     const [productImages, setProductImages] = useState([]);
     const [productDescription, setProductDescription] = useState('');
@@ -83,8 +80,8 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle className={classes.dialogTitle}>{editingProduct ? 'ערוך מוצר' : 'העלה מוצר חדש'}</DialogTitle>
-            <DialogContent className={classes.dialogContent}>
+            <CustomDialogTitle>{editingProduct ? 'ערוך מוצר' : 'העלה מוצר חדש'}</CustomDialogTitle>
+            <CustomDialogContent>
                 <Box component="form" onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
@@ -129,12 +126,12 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
                         onChange={(e) => setProductPrice(e.target.value)}
                         margin="normal"
                     />
-                    <DialogActions className={classes.dialogActions}>
+                    <CustomDialogActions>
                         <Button onClick={onClose} color="secondary">בטל</Button>
                         <Button type="submit" color="primary">{editingProduct ? 'שמור שינויים' : 'הוסף מוצר'}</Button>
-                    </DialogActions>
+                    </CustomDialogActions>
                 </Box>
-            </DialogContent>
+            </CustomDialogContent>
         </Dialog>
     );
 };

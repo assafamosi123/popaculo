@@ -10,39 +10,31 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { makeStyles } from '@mui/styles';
+import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
-const useStyles = makeStyles((theme) => ({
-    drawer: {
-        width: 100,
-        flexShrink: 0,
-        top: '5px',
-    },
-    drawerPaper: {
-        width: 250,
-        top: '10px',
-    },
-    cartTitle: {
-        padding: theme.spacing(3),
-    },
-    listItem: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    listItemText: {
-        flex: 1,
-    },
-    listItemImage: {
-        marginRight: theme.spacing(2),
-        width: 50,
-        height: 50,
-        objectFit: 'cover',
-    },
+const DrawerPaper = styled(Drawer)(({ theme }) => ({
+    width: 250,
+    top: '10px',
+}));
+
+const CartTitle = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(3),
+}));
+
+const ListItemStyled = styled(ListItem)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+}));
+
+const ListItemImage = styled('img')(({ theme }) => ({
+    marginRight: theme.spacing(2),
+    width: 50,
+    height: 50,
+    objectFit: 'cover',
 }));
 
 const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
-    const classes = useStyles();
     const navigate = useNavigate();
 
     const handleCheckout = () => {
@@ -54,29 +46,25 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
     }
 
     return (
-        <Drawer
+        <DrawerPaper
             anchor="right"
             open={open}
             onClose={onClose}
-            classes={{
-                paper: classes.drawerPaper,
-            }}
         >
-            <Box className={classes.cartTitle}>
+            <CartTitle>
                 <Typography variant="h6">עגלת הקניות</Typography>
-            </Box>
+            </CartTitle>
             <Divider />
             <List>
                 {cartItems.length === 0 ? (
-                    <ListItem>
+                    <ListItemStyled>
                         <ListItemText primary="אין מוצרים בעגלה" />
-                    </ListItem>
+                    </ListItemStyled>
                 ) : (
                     cartItems.map((item, index) => (
-                        <ListItem key={index} className={classes.listItem}>
-                            <img src={item.images[0]} alt={item.name} className={classes.listItemImage} />
+                        <ListItemStyled key={index}>
+                            <ListItemImage src={item.images[0]} alt={item.name} />
                             <ListItemText
-                                className={classes.listItemText}
                                 primary={item.name}
                                 secondary={`מחיר: ${item.price} ש"ח, מידה: ${item.size}`}
                             />
@@ -85,7 +73,7 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                                     <DeleteIcon />
                                 </IconButton>
                             </ListItemSecondaryAction>
-                        </ListItem>
+                        </ListItemStyled>
                     ))
                 )}
             </List>
@@ -98,7 +86,7 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                     מעבר לתשלום
                 </Button>
             </Box>
-        </Drawer>
+        </DrawerPaper>
     );
 };
 
