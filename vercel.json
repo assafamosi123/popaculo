@@ -1,7 +1,7 @@
 {
     "projects": {
-      "coca-pola": {
-        "src": "coca-pola",
+      "popa-culo": {
+        "src": "popa-culo",
         "output": "/",
         "buildCommand": "npm run build",
         "devCommand": "npm run dev"
