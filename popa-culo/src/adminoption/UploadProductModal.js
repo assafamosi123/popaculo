@@ -59,7 +59,7 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
 
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.post('http://localhost:5001/api/products', formData, {
+                const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/products`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${token}`,

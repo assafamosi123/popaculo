@@ -38,12 +38,11 @@ function UserPopup({ open, onClose }) {
 
         try {
             let response;
-            const serverIP = '   http://172.20.10.2:5001'; // הכתובת IP של המחשב
 
             if (isLogin) {
-                response = await axios.post(`${serverIP}/api/auth/login`, { email, password });
+                response = await axios.post(`${process.env.REACT_APP_SERVER}/api/auth/login`, { email, password });
             } else {
-                response = await axios.post(`${serverIP}/api/auth/register`, { name, email, password });
+                response = await axios.post(`${process.env.REACT_APP_SERVER}/api/auth/register`, { name, email, password });
             }
 
             localStorage.setItem('token', response.data.token);

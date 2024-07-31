@@ -26,31 +26,10 @@ const addAddress = async (req, res) => {
     user.addresses.push(newAddress._id);
     await user.save();
 
-    // שליחת מייל עם פרטי ההזמנה
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
+    res.status(201).json({
+        address: newAddress
     });
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.BUSINESS_EMAIL,
-        subject: 'New Order',
-        text: `Order details:\n\nAddress: ${street}, ${city}, ${zipCode}\nPhone: ${phone}\nEmail: ${email}`
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log('Error sending email:', error);
-        } else {
-            console.log('Email sent:', info.response);
-        }
-    });
-
-    res.status(201).json(newAddress);
+    
 };
 
 module.exports = { addAddress };

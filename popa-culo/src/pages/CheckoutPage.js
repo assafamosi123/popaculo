@@ -34,7 +34,6 @@ const CheckoutPage = () => {
                 console.error('Error fetching addresses:', error);
             }
         };
-
         fetchAddresses();
     }, []);
 

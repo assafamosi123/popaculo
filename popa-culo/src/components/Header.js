@@ -14,7 +14,7 @@ const Header = ({ onCartClick, onUserClick, onUploadClick }) => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            axios.get(' http://172.20.10.2:5001/api/auth/user', {
+            axios.get(`${process.env.REACT_APP_SERVER}/api/auth/user`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(response => {

@@ -7,78 +7,83 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {motion} from 'framer-motion';
+import zIndex from '@mui/material/styles/zIndex';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         position: 'relative',
-        overflow: 'hidden',
         width: '100vw',
-        minHeight: '100vh',
+        height: '100vh',
         textAlign: 'center',
         color: '#fff',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'revert-layer',
         alignItems: 'center',
-        paddingTop: '16px', // Adjusted value to account for the header height
+        paddingTop: '8px',
         margin: 0,
-        backgroundColor: 'rgba(163,78,78,0.63)', // Set a background color instead of a video
+        backgroundColor: 'rgba(163,78,78,0.63)',
+        overflowX: 'hidden', // הוספת overflow-x: hidden ל-root
     },
     header: {
         zIndex: 2,
-        fontFamily: 'Bodoni Moda, serif', // Use the custom font
+        fontFamily: 'Bodoni Moda, serif',
         textAlign: 'center',
-        color: 'rgb(168,28,81)', // Pink from logo
-        marginTop: theme.spacing(2), // Adjusted value to move the header lower
+        color: 'rgb(168,28,81)',
+        margin: '30px'
     },
     description: {
         zIndex: 2,
-        color: '#a81c51', // Pink from logo
-        fontFamily: 'CustomFont', // Use the custom font
+        color: '#a81c51',
+        fontFamily: 'CustomFont',
         textAlign: 'center',
-        marginTop: theme.spacing(1), // Adjusted value to move the description lower
+        marginTop: '220px',
     },
     buttonContainer: {
         zIndex: 2,
         display: 'flex',
         justifyContent: 'center',
-        marginTop: theme.spacing(5), // Adjusted value to move the button lower
+        marginTop: theme.spacing(5),
     },
     buttonPrimary: {
-        backgroundColor: '#65103f', // Pink from logo
-        color: '#3E2723', // Dark brown for text
+        backgroundColor: '#65103f',
+        color: '#3E2723',
         '&:hover': {
-            backgroundColor: '#ae0000', // Lighter pink for hover
+            backgroundColor: '#ae0000',
+            zIndex: 2
         },
     },
     carouselContainer: {
         width: '100%',
-        marginTop: theme.spacing(6),
-        position: 'relative',
+        marginTop:'auto',
+        position: 'static',
+        
     },
     carouselImage: {
         width: '100%',
-        height: '80vh',
+        height: '100vh',
         objectFit: 'cover',
-        objectPosition: 'center', // Adjusted for better fit on desktop
+        objectPosition: 'center',
+        position: 'relative', // ensure this is relative so that the button can be positioned above it
     },
     overlayText: {
         position: 'absolute',
-        top: '10%', // Adjusted value for positioning the text
+        top: '7%',
         width: '100%',
         textAlign: 'center',
         zIndex: 1,
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
     },
     overlayButton: {
         position: 'absolute',
-        bottom: '20px',
-        width: '100%',
-        textAlign: 'center',
-        zIndex: 1,
+        bottom: '30px',
+        left: '50%',
+        transform: 'translateX(-50%)', // centers the button horizontally
+        zIndex: 2,
     },
 }));
 
+// JSX component code
 function HomePage({ onAddToCart }) {
     const classes = useStyles();
     const [showCollections, setShowCollections] = useState(false);
@@ -87,7 +92,7 @@ function HomePage({ onAddToCart }) {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('http://172.20.10.2:5001/api/products');
+                const response = await axios.get(`${process.env.REACT_APP_SERVER}/api/products`);
                 console.log('Fetched products:', response.data);
                 const productsWithImages = response.data.map(product => ({
                     ...product,
@@ -106,9 +111,9 @@ function HomePage({ onAddToCart }) {
     };
 
     const carouselSettings = {
-        dots: true,
+        dots: false,
         infinite: true,
-        speed: 500,
+        speed: 1000 ,
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
@@ -128,16 +133,14 @@ function HomePage({ onAddToCart }) {
     return (
         <Box className={classes.root}>
             <Box className={classes.carouselContainer}>
-                <Box className={classes.overlayText}>
+                <Box className={classes.overlayText} sx={{marginBottom: '2200px'}}>
                     <motion.div
                         initial={{ opacity: 0,  y: -100 }}
                         animate={{ opacity: 1,  y: 0 }}
                         transition={{ duration: 0.8 }}
+                 >
 
-
-                    >
-
-                    <Typography component="h1" variant="h2" className={classes.header}>
+                    <Typography component="h1" variant="h2" sx={{color: 'rgb(168,28,81)', marginBottom: '10px'}}>
                         Popa Culo
                     </Typography>
                     <Typography variant="h5" className={classes.description}>
@@ -146,6 +149,7 @@ function HomePage({ onAddToCart }) {
                     </motion.div>
 
                 </Box>
+                
                 <Slider {...carouselSettings}>
                     {sampleImages.map((src, index) => (
                         <img
@@ -158,7 +162,7 @@ function HomePage({ onAddToCart }) {
                     ))}
                 </Slider>
                 <Box className={classes.overlayButton}>
-                    <Button variant="contained" className={classes.buttonPrimary} onClick={handleShowCollections}>
+                    <Button  variant="contained" className={classes.buttonPrimary} onClick={handleShowCollections}>
                         הקולקציות שלנו
                     </Button>
                 </Box>

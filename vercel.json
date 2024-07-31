@@ -1,0 +1,16 @@
+{
+    "projects": {
+      "coca-pola": {
+        "src": "coca-pola",
+        "output": "/",
+        "buildCommand": "npm run build",
+        "devCommand": "npm run dev"
+      },
+      "server": {
+        "src": "server",
+        "output": "/api",
+        "buildCommand": "npm install",
+        "devCommand": "npm start"
+      }
+    }
+  }
