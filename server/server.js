@@ -14,11 +14,12 @@ connectDB();
 
 const app = express();
 
+const cors = require('cors');
+
 app.use(cors({
-    origin: ['popaculofront.vercel.app', 'http://172.20.10.2:3000'],
+    origin: ['https://popaculofront.vercel.app'], // כלול גם את הפרוטוקול
     credentials: true
 }));
-
 app.use(express.json());
 app.use(morgan('dev'));
 
