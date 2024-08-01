@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
 import styled from '@emotion/styled';
+import { DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import TextField from '@mui/material/TextField';
 import axios from 'axios';
-import { DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
 const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
-    backgroundColor: '#8B4513',
+    backgroundColor: '#8B513',
     color: 'white',
 }));
 

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
-import Header from './components/Header';
-import HomePage from './pages/HomePage';
-import CartPopup from './components/CartPopup';
-import UserPopup from './components/UserPopup';
+import { Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom';
 import UploadProductModal from './adminoption/UploadProductModal';
+import CartPopup from './components/CartPopup';
+import Header from './components/Header';
+import UserPopup from './components/UserPopup';
 import CheckoutPage from './pages/CheckoutPage';
+import HomePage from './pages/HomePage';
 
 const App = () => {
     const [cartOpen, setCartOpen] = useState(false);

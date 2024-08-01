@@ -3,12 +3,12 @@
   "name": "Popa Culo Web App",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dnuytrlyh/image/upload/v1722451519/logo192_r9041e.jpg",
+      "src": "/logo192",
       "type": "image/jpg",
       "sizes": "192x192"
     },
     {
-      "src": "https://res.cloudinary.com/dnuytrlyh/image/upload/v1722451519/logo512_dt8gnp.jpg",
+      "src": "/logo512",
       "type": "image/jpg",
       "sizes": "512x512"
     }

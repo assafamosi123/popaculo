@@ -1,13 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
-import { Typography, Button, Box, Container } from '@mui/material';
 import styled from '@emotion/styled';
+import { Box, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
-import ProductDisplay from '../components/ProductDisplay';
-import Slider from 'react-slick';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import ProductDisplay from '../components/ProductDisplay';
 
 const Root = styled(Box)(({ theme }) => ({
     position: 'relative',
@@ -19,7 +19,6 @@ const Root = styled(Box)(({ theme }) => ({
     flexDirection: 'column',
     justifyContent: 'revert-layer',
     alignItems: 'center',
-    paddingTop: '8px',
     margin: 0,
     backgroundColor: 'rgba(163,78,78,0.63)',
     overflowX: 'hidden',
@@ -58,11 +57,12 @@ const CarouselImage = styled('img')(({ theme }) => ({
 
 const OverlayText = styled(Box)(({ theme }) => ({
     position: 'absolute',
-    top: '7%',
+    top: '10%',
     width: '100%',
     textAlign: 'center',
     zIndex: 1,
-    padding: theme.spacing(1),
+    padding: 2,
+    marginTop: '0px' ,
 }));
 
 const OverlayButton = styled(Button)(({ theme }) => ({
@@ -129,7 +129,7 @@ function HomePage({ onAddToCart }) {
                         <Typography component="h1" variant="h2" sx={{ color: 'rgb(168,28,81)', marginBottom: '10px' }}>
                             Popa Culo
                         </Typography>
-                        <Typography variant="h5" sx={{ color: '#a81c51', fontFamily: 'CustomFont', textAlign: 'center', marginTop: '220px' }}>
+                        <Typography variant="h5" sx={{ color: '#a81c51', fontFamily: 'CustomFont', textAlign: 'center', marginTop: '20px' }}>
                             ברוכים הבאים לאתר שלנו! כאן תוכלו למצוא את הקולקציות היפות והאיכותיות ביותר של בגדי ים.
                         </Typography>
                     </motion.div>

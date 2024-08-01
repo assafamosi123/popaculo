@@ -14,8 +14,8 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
 const DrawerPaper = styled(Drawer)(({ theme }) => ({
-    width: 250,
-    top: '10px',
+    width: 300,
+    top: '20px',
 }));
 
 const CartTitle = styled(Box)(({ theme }) => ({
@@ -39,15 +39,15 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
 
     const handleCheckout = () => {
         navigate('/checkout', { state: { cartItems } });
+        onClose(); // סגירת העגלה אחרי הניווט
     };
-
     if (!cartItems) {
         return null;
     }
 
     return (
         <DrawerPaper
-            anchor="right"
+            anchor="left"
             open={open}
             onClose={onClose}
         >
@@ -83,7 +83,7 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                     סה"כ: {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)} ש"ח
                 </Typography>
                 <Button variant="contained" color="primary" fullWidth style={{ marginTop: '16px' }} onClick={handleCheckout}>
-                    מעבר לתשלום
+                    ֹֹֹֹֹֹ לתשלום
                 </Button>
             </Box>
         </DrawerPaper>

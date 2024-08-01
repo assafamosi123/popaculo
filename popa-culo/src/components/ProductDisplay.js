@@ -12,8 +12,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const ProductCard = styled(Box)(({ theme }) => ({
-    border: '1px solid #ddd',
-    borderRadius: '8px',
+    border: '40px solid #FAEBD7',
+    borderRadius: '40px',
     padding: '16px',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     direction: 'rtl',
@@ -22,7 +22,7 @@ const ProductCard = styled(Box)(({ theme }) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     width: '100%',
-    overflow: 'hidden',
+    
 }));
 
 const ProductImage = styled('img')(({ theme }) => ({
@@ -33,24 +33,25 @@ const ProductImage = styled('img')(({ theme }) => ({
 }));
 
 const ProductInfo = styled(Box)(({ theme }) => ({
-    marginTop: '16px',
+    marginTop: '10px',
 }));
 
 const Price = styled(Typography)(({ theme }) => ({
     marginTop: '8px',
     fontWeight: 'bold',
-    color: theme.palette.primary.main,
+    color: '#FAEBD7',
 }));
 
 const ButtonGroup = styled(Box)(({ theme }) => ({
     marginTop: '16px',
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
 }));
 
 const SizeButton = styled(Button)(({ theme }) => ({
     margin: '5px',
     flex: 1,
+
 }));
 
 const DialogImage = styled('img')(({ theme }) => ({
@@ -65,7 +66,7 @@ const Counter = styled(Box)(({ theme }) => ({
 }));
 
 const ContainerStyled = styled(Grid)(({ theme }) => ({
-    display: 'flex',
+    display: 'absolute',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: '1rem',

@@ -7,17 +7,15 @@ const authRoutes = require('./routes/authRoutes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const productRoutes = require('./routes/productRoutes');
 const path = require('path');
-
+const addressRoutes = require('./routes/addressRoutes');
 dotenv.config();
 
 connectDB();
 
 const app = express();
 
-
-
 app.use(cors({
-    origin: ['https://popaculofront.vercel.app'], // כלול גם את הפרוטוקול
+    origin: ['http://localhost:3000', 'https://popaculofront.vercel.app'], // אפשר גם גישה מlocalhost
     credentials: true
 }));
 app.use(express.json());
@@ -25,7 +23,7 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
-
+app.use('/api/address', addressRoutes);
 app.use(errorMiddleware.notFound);
 app.use(errorMiddleware.errorHandler);
 
@@ -33,4 +31,4 @@ const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-});
+});         

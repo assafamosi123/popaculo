@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import './CheckoutStyles.css';
-import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import './CheckoutStyles.css';
 
 const CheckoutPage = () => {
     const location = useLocation();
     const [currentStep, setCurrentStep] = useState(1);
     const [addresses, setAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
-    const [formData, setFormData] = useState({
+    const [newAddress, setNewAddress] = useState({
         firstName: '',
         lastName: '',
         street: '',
@@ -24,12 +24,16 @@ const CheckoutPage = () => {
     useEffect(() => {
         const fetchAddresses = async () => {
             try {
-                const { data } = await axios.get('http://172.20.10.2:5001/api/address');
+                const token = localStorage.getItem('token'); // נניח שהטוקן מאוחסן ב-localStorage
+                const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/address`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 setAddresses(data);
                 if (data.length > 0) {
                     setSelectedAddress(data[0]);
                 }
-
             } catch (error) {
                 console.error('Error fetching addresses:', error);
             }
@@ -39,29 +43,19 @@ const CheckoutPage = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setNewAddress({
+            ...newAddress,
             [name]: value
         });
     };
 
     const handleAddressSelect = (address) => {
         setSelectedAddress(address);
-        setFormData({
-            firstName: address.firstName,
-            lastName: address.lastName,
-            street: address.street,
-            city: address.city,
-            streetNumber: address.streetNumber,
-            postalCode: address.postalCode,
-            phone: address.phone,
-            email: address.email
-        });
     };
 
     const handleAddressDelete = async (addressId) => {
         try {
-            await axios.delete(`http://172.20.10.2:5001/api/address/${addressId}`);
+            await axios.delete(`${process.env.REACT_APP_SERVER}/api/address/${addressId}`);
             setAddresses(addresses.filter(address => address._id !== addressId));
             if (selectedAddress && selectedAddress._id === addressId) {
                 setSelectedAddress(null);
@@ -71,16 +65,24 @@ const CheckoutPage = () => {
         }
     };
 
+    const handleAddAddress = async () => {
+        try {
+            const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/address`, newAddress);
+            setAddresses([...addresses, data.address]);
+            setSelectedAddress(data.address);
+        } catch (error) {
+            console.error('Error adding address:', error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (currentStep < 4) {
             setCurrentStep(currentStep + 1);
         } else {
             try {
-                const addressToUse = selectedAddress ? selectedAddress : formData;
-                await axios.post('http://172.20.10.2:5001/api/address', addressToUse);
-                // Send order details email
-                await axios.post('http://172.20.10.2:5001/api/order', {
+                const addressToUse = selectedAddress ? selectedAddress : newAddress;
+                await axios.post(`${process.env.REACT_APP_SERVER}/api/order`, {
                     ...addressToUse,
                     cartItems
                 });
@@ -127,57 +129,60 @@ const CheckoutPage = () => {
                                         <button type="button" onClick={() => handleAddressDelete(selectedAddress._id)}>מחק כתובת</button>
                                     </>
                                 ) : (
-                                    <>
-                                        <input
-                                            type="text"
-                                            name="firstName"
-                                            placeholder="שם פרטי"
-                                            value={formData.firstName}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="lastName"
-                                            placeholder="שם משפחה"
-                                            value={formData.lastName}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="street"
-                                            placeholder="רחוב"
-                                            value={formData.street}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="streetNumber"
-                                            placeholder="מספר"
-                                            value={formData.streetNumber}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="city"
-                                            placeholder="עיר"
-                                            value={formData.city}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            name="postalCode"
-                                            placeholder="מיקוד"
-                                            value={formData.postalCode}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </>
+                                    <p>לא נמצאו כתובות. אנא הוסף כתובת חדשה.</p>
                                 )}
+                                <div>
+                                    <h6>הוסף כתובת חדשה</h6>
+                                    <input
+                                        type="text"
+                                        name="firstName"
+                                        placeholder="שם פרטי"
+                                        value={newAddress.firstName}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        placeholder="שם משפחה"
+                                        value={newAddress.lastName}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        name="street"
+                                        placeholder="רחוב"
+                                        value={newAddress.street}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        name="streetNumber"
+                                        placeholder="מספר"
+                                        value={newAddress.streetNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        placeholder="עיר"
+                                        value={newAddress.city}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        name="postalCode"
+                                        placeholder="מיקוד"
+                                        value={newAddress.postalCode}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <button type="button" onClick={handleAddAddress}>הוסף כתובת</button>
+                                </div>
                             </div>
                         )}
                         {currentStep === 2 && (
@@ -187,7 +192,7 @@ const CheckoutPage = () => {
                                     type="tel"
                                     name="phone"
                                     placeholder="טלפון"
-                                    value={formData.phone}
+                                    value={newAddress.phone}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -195,7 +200,7 @@ const CheckoutPage = () => {
                                     type="email"
                                     name="email"
                                     placeholder="אימייל"
-                                    value={formData.email}
+                                    value={newAddress.email}
                                     onChange={handleInputChange}
                                     required
                                 />
