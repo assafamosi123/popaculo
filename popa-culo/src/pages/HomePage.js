@@ -80,6 +80,7 @@ function HomePage({ onAddToCart }) {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
+                console.log(`${process.env.REACT_APP_SERVER}/api/products`)
                 const response = await axios.get(`${process.env.REACT_APP_SERVER}/api/products`);
                 console.log('Fetched products:', response.data);
                 const productsWithImages = response.data.map(product => ({
