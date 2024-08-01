@@ -87,7 +87,7 @@ function HomePage({ onAddToCart }) {
                     ...product,
                 }));
                 setProducts(productsWithImages);
-            } catch (error) {
+            } catch (error) { 
                 console.error('Error fetching products:', error);
             }
         };
