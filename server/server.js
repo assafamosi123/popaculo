@@ -14,7 +14,7 @@ connectDB();
 
 const app = express();
 
-const cors = require('cors');
+
 
 app.use(cors({
     origin: ['https://popaculofront.vercel.app'], // כלול גם את הפרוטוקול
@@ -25,7 +25,6 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.use(errorMiddleware.notFound);
 app.use(errorMiddleware.errorHandler);
