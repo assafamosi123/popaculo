@@ -1,9 +1,8 @@
-
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Box, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -26,7 +25,7 @@ const Root = styled(Box)(({ theme }) => ({
 
 const Header = styled('div')(({ theme }) => ({
     zIndex: 2,
-    fontFamily: 'Bodoni Moda, serif',
+    fontFamily: 'Cinzel Decorative, sans-serif',
     textAlign: 'center',
     color: 'rgb(168,28,81)',
     margin: '30px',
@@ -62,7 +61,7 @@ const OverlayText = styled(Box)(({ theme }) => ({
     textAlign: 'center',
     zIndex: 1,
     padding: 2,
-    marginTop: '0px' ,
+    marginTop: '0px',
 }));
 
 const OverlayButton = styled(Button)(({ theme }) => ({
@@ -75,19 +74,18 @@ const OverlayButton = styled(Button)(({ theme }) => ({
 
 function HomePage({ onAddToCart }) {
     const [showCollections, setShowCollections] = useState(false);
+    const [showScrollMessage, setShowScrollMessage] = useState(false);
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                console.log(`${process.env.REACT_APP_SERVER}/api/products`)
                 const response = await axios.get(`${process.env.REACT_APP_SERVER}/api/products`);
-                console.log('Fetched products:', response.data);
                 const productsWithImages = response.data.map(product => ({
                     ...product,
                 }));
                 setProducts(productsWithImages);
-            } catch (error) { 
+            } catch (error) {
                 console.error('Error fetching products:', error);
             }
         };
@@ -96,8 +94,29 @@ function HomePage({ onAddToCart }) {
     }, []);
 
     const handleShowCollections = () => {
+        if (showCollections) {
+            setShowScrollMessage(false);
+        } else {
+            setShowScrollMessage(true);
+            setTimeout(() => {
+                setShowScrollMessage(false);
+            }, 3000); // Hide the message after 3 seconds
+        }
         setShowCollections(!showCollections);
     };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 0) {
+                setShowScrollMessage(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     const carouselSettings = {
         dots: false,
@@ -115,12 +134,10 @@ function HomePage({ onAddToCart }) {
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1622231344038/image2_Large_a3upax',
     ];
 
-    console.log('Sample images:', sampleImages);
-
     return (
         <Root>
             <CarouselContainer>
-                <OverlayText sx={{ marginBottom: '2200px' }}>
+                <OverlayText>
                     <motion.div
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -140,7 +157,6 @@ function HomePage({ onAddToCart }) {
                             key={index}
                             src={src}
                             alt={`Sample ${index}`}
-                            onError={(e) => console.error('Image load error:', src, e)}
                         />
                     ))}
                 </Slider>
@@ -158,6 +174,26 @@ function HomePage({ onAddToCart }) {
                     </Container>
                 </Box>
             )}
+            {showScrollMessage && (
+    <motion.div
+        initial={{ opacity: 0, y: 1 }}
+        animate={{ opacity: 1, y: 3 }}
+        transition={{ duration: 0.5 }}
+        style={{
+            position: 'fixed',
+            top: '80%',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            padding: '10px 20px',
+            borderRadius: '10px',
+            color: '#fff',
+            zIndex: 1000,  // Higher z-index to ensure it's on top
+        
+            // Ensures it doesn’t interfere with other interactions
+        }}
+    >
+        Scroll down to see the collection!
+    </motion.div>
+)}
         </Root>
     );
 }

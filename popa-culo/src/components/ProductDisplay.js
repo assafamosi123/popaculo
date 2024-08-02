@@ -12,7 +12,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const ProductCard = styled(Box)(({ theme }) => ({
-    border: '40px solid #FAEBD7',
+    border: '40px solid #ddd',
     borderRadius: '40px',
     padding: '16px',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -22,7 +22,6 @@ const ProductCard = styled(Box)(({ theme }) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     width: '100%',
-    
 }));
 
 const ProductImage = styled('img')(({ theme }) => ({
@@ -39,7 +38,7 @@ const ProductInfo = styled(Box)(({ theme }) => ({
 const Price = styled(Typography)(({ theme }) => ({
     marginTop: '8px',
     fontWeight: 'bold',
-    color: '#FAEBD7',
+    color: theme.palette.primary.main,
 }));
 
 const ButtonGroup = styled(Box)(({ theme }) => ({
@@ -51,7 +50,6 @@ const ButtonGroup = styled(Box)(({ theme }) => ({
 const SizeButton = styled(Button)(({ theme }) => ({
     margin: '5px',
     flex: 1,
-
 }));
 
 const DialogImage = styled('img')(({ theme }) => ({
@@ -60,13 +58,8 @@ const DialogImage = styled('img')(({ theme }) => ({
     display: 'block',
 }));
 
-const Counter = styled(Box)(({ theme }) => ({
-    textAlign: 'center',
-    margin: '10px 0',
-}));
-
 const ContainerStyled = styled(Grid)(({ theme }) => ({
-    display: 'absolute',
+    display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: '1rem',
@@ -114,7 +107,7 @@ const ProductDisplay = ({ products, onAddToCart }) => {
     const handleClose = () => {
         setOpen(false);
     };
-    
+
     const settings = {
         dots: false,
         infinite: true,
@@ -128,85 +121,85 @@ const ProductDisplay = ({ products, onAddToCart }) => {
 
     return (
         <motion.div style={{ y: parallaxEffect }}>
-        <Box sx={{ mt: '1rem' }}>
-            <ContainerStyled container spacing={2}>
-                {products.map((product, index) => {
-                    const { ref, inView } = useInView({ triggerOnce: true });
+            <Box sx={{ mt: '1rem' }}>
+                <ContainerStyled container spacing={2}>
+                    {products.map((product, index) => {
+                        const { ref, inView } = useInView({ triggerOnce: true });
 
-                    return (
-                        <ItemStyled item xs={12} sm={6} md={3} key={index}>
-                            <motion.div
-                                ref={ref}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 1. }}
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={inView ? { opacity: 1, y: 5 } : {}}
-                                transition={{ duration: 0.5, ease: "easeOut" }}
-                                as={ProductCard}
-                            >
-                                {product.images && product.images.length > 0 && (
-                                    <ProductImage
-                                        src={product.images[0]}
-                                        alt={`Product ${index} Main Image`}
-                                        onClick={() => handleImageClick(product.images, 0)}
-                                    />
-                                )}
-                                <ProductInfo>
-                                    <Typography variant="h6">{product.name}</Typography>
-                                    <Typography variant="body2" color="textSecondary">{product.description}</Typography>
-                                    <Price variant="h6">{product.price} ש"ח</Price>
-                                    <Box>
-                                        <Typography variant="body2">בחר מידה:</Typography>
-                                        <div style={{ display: 'flex', flexDirection: 'row-reverse', width: '100%' }}>
-                                            {['S', 'M', 'L'].map((size) => (
-                                                <SizeButton
-                                                    key={size}
-                                                    variant={selectedSize[index] === size ? 'contained' : 'outlined'}
-                                                    color="primary"
-                                                    onClick={() => handleSizeChange(index, size)}
-                                                >
-                                                    {size}
-                                                </SizeButton>
-                                            ))}
-                                        </div>
-                                    </Box>
-                                </ProductInfo>
-                                <ButtonGroup>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => onAddToCart(product, selectedSize[index])}
-                                        disabled={!selectedSize[index]}
-                                    >
-                                        הוסף לסל
-                                    </Button>
-                                </ButtonGroup>
-                            </motion.div>
-                        </ItemStyled>
-                    );
-                })}
-            </ContainerStyled>
-            <Dialog open={open} onClose={handleClose}>
-                <Box position="relative">
-                    {currentProductImages.length > 1 ? (
-                        <Slider {...settings}>
-                            {currentProductImages.map((image, index) => (
-                                <div key={image}>
-                                    <DialogImage src={image} alt={`Product Image ${index}`} />
-                                </div>
-                            ))}
-                        </Slider>
-                    ) : (
-                        <div onClick={handleClose} key={currentProductImages[0]}>
-                            <DialogImage src={currentProductImages[0]} alt={`Product Image ${0}`} />
-                        </div>
-                    )}
-                    <SliderCounter>
-                        {currentImageIndex + 1} / {currentProductImages.length}
-                    </SliderCounter>
-                </Box>
-            </Dialog>
-        </Box>
+                        return (
+                            <ItemStyled item xs={12} sm={6} md={3} key={index}>
+                                <motion.div
+                                    ref={ref}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 1. }}
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={inView ? { opacity: 1, y: 5 } : {}}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    as={ProductCard}
+                                >
+                                    {product.images && product.images.length > 0 && (
+                                        <ProductImage
+                                            src={product.images[0]}
+                                            alt={`Product ${index} Main Image`}
+                                            onClick={() => handleImageClick(product.images, 0)}
+                                        />
+                                    )}
+                                    <ProductInfo>
+                                        <Typography variant="h6">{product.name}</Typography>
+                                        <Typography variant="body2" color="textSecondary">{product.description}</Typography>
+                                        <Price variant="h6">{product.price} ש"ח</Price>
+                                        <Box>
+                                            <Typography variant="body2">בחר מידה:</Typography>
+                                            <div style={{ display: 'flex', flexDirection: 'row-reverse', width: '100%' }}>
+                                                {['S', 'M', 'L'].map((size) => (
+                                                    <SizeButton
+                                                        key={size}
+                                                        variant={selectedSize[index] === size ? 'contained' : 'outlined'}
+                                                        color="primary"
+                                                        onClick={() => handleSizeChange(index, size)}
+                                                    >
+                                                        {size}
+                                                    </SizeButton>
+                                                ))}
+                                            </div>
+                                        </Box>
+                                    </ProductInfo>
+                                    <ButtonGroup>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => onAddToCart(product, selectedSize[index])}
+                                            disabled={!selectedSize[index]}
+                                        >
+                                            הוסף לסל
+                                        </Button>
+                                    </ButtonGroup>
+                                </motion.div>
+                            </ItemStyled>
+                        );
+                    })}
+                </ContainerStyled>
+                <Dialog open={open} onClose={handleClose}>
+                    <Box position="relative">
+                        {currentProductImages.length > 1 ? (
+                            <Slider {...settings}>
+                                {currentProductImages.map((image, index) => (
+                                    <div key={image}>
+                                        <DialogImage src={image} alt={`Product Image ${index}`} />
+                                    </div>
+                                ))}
+                            </Slider>
+                        ) : (
+                            <div onClick={handleClose} key={currentProductImages[0]}>
+                                <DialogImage src={currentProductImages[0]} alt={`Product Image ${0}`} />
+                            </div>
+                        )}
+                        <SliderCounter>
+                            {currentImageIndex + 1} / {currentProductImages.length}
+                        </SliderCounter>
+                    </Box>
+                </Dialog>
+            </Box>
         </motion.div>
     );
 };
