@@ -1,5 +1,9 @@
-// models/Product.js
 const mongoose = require('mongoose');
+
+const sizeSchema = mongoose.Schema({
+    size: { type: String, required: true },
+    stock: { type: Number, required: true },
+});
 
 const productSchema = mongoose.Schema({
     name: {
@@ -17,7 +21,8 @@ const productSchema = mongoose.Schema({
     images: [{
         type: String,
         required: true
-    }]
+    }],
+    sizes: [sizeSchema],
 }, {
     timestamps: true
 });

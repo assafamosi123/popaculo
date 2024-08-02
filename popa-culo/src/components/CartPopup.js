@@ -82,7 +82,8 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                 <Typography variant="h6">
                     סה"כ: {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)} ש"ח
                 </Typography>
-                <Button variant="contained" color="primary" fullWidth style={{ marginTop: '16px' }} onClick={handleCheckout}>
+                <Button variant="contained" color="primary" fullWidth style={{ marginTop: '16px' }} 
+                 onClick={handleCheckout}>
                     ֹֹֹֹֹֹ לתשלום
                 </Button>
             </Box>

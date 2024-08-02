@@ -1,62 +1,72 @@
+/* Base Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h6 {
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Checkout Page Layout */
 .checkout-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    font-family: Arial, sans-serif;
-    direction: rtl;
-    text-align: right;
+    border-radius: 8px;
 }
 
 .checkout-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .step-indicators {
     display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    margin-bottom: 30px;
 }
 
 .step {
+    background-color: #e0e0e0;
+    color: #fff;
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: #ddd;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-weight: bold;
 }
 
 .step.completed {
     background-color: #4caf50;
-    color: white;
 }
 
 .step-line {
-    width: 50px;
-    height: 2px;
-    background-color: #ddd;
+    flex: 1;
+    height: 4px;
+    background-color: #e0e0e0;
+    margin: 0 10px;
+    border-radius: 2px;
 }
 
+/* Form Layout */
 .checkout-content {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .left-column {
-    flex: 2;
-    margin-left: 20px;
-}
-
-.right-column {
     flex: 1;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 5px;
 }
 
 .section {
@@ -65,74 +75,112 @@
 
 .section h6 {
     margin-bottom: 10px;
+    font-size: 16px;
+    color: #555;
 }
 
-.section input,
-.section select {
-    display: block;
+.section input, .section select {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-.product-list {
+.section input:focus, .section select:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+.checkout-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.checkout-button:hover {
+    background-color: #388e3c;
+}
+
+.right-column {
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.right-column h6 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+/* Summary Styles */
+.summary-list {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
-.product-list li {
+.summary-list li {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
 }
 
-.product-list img {
-    width: 60px;
-    height: 60px;
+.summary-list img {
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    margin-left: 10px;
+    border-radius: 4px;
+    margin-right: 10px;
 }
 
-.product-details {
+.summary-details {
     display: flex;
     flex-direction: column;
 }
 
-.product-details span {
-    margin-bottom: 5px;
+.total-summary {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .total-price {
     display: flex;
     justify-content: space-between;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
     font-size: 18px;
     font-weight: bold;
 }
 
-.checkout-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+    .checkout-page {
+        padding: 15px;
+    }
 
-.checkout-button:disabled {
-    background-color: #ddd;
-    cursor: not-allowed;
-}
+    .checkout-content {
+        flex-direction: column;
+    }
 
-.summary-list {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-}
-
-.summary-total {
-    font-size: 20px;
-    font-weight: bold;
+    .right-column {
+        margin-top: 20px;
+    }
 }

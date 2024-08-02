@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './CheckoutStyles.css';
 
 const CheckoutPage = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
     const [addresses, setAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
@@ -18,13 +19,21 @@ const CheckoutPage = () => {
         phone: '',
         email: ''
     });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const cartItems = location.state?.cartItems || [];
 
     useEffect(() => {
         const fetchAddresses = async () => {
             try {
-                const token = localStorage.getItem('token'); // נניח שהטוקן מאוחסן ב-localStorage
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    setIsAuthenticated(false);
+                    return;
+                }
+
+                setIsAuthenticated(true);
+
                 const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/address`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -39,7 +48,7 @@ const CheckoutPage = () => {
             }
         };
         fetchAddresses();
-    }, []);
+    }, [navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -53,15 +62,21 @@ const CheckoutPage = () => {
         setSelectedAddress(address);
     };
 
-    const handleAddressDelete = async (addressId) => {
+    const addAddress = async (addressData) => {
         try {
-            await axios.delete(`${process.env.REACT_APP_SERVER}/api/address/${addressId}`);
-            setAddresses(addresses.filter(address => address._id !== addressId));
-            if (selectedAddress && selectedAddress._id === addressId) {
-                setSelectedAddress(null);
-            }
+            const token = localStorage.getItem('token'); // Get token from localStorage
+            const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/address`, addressData, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Include token in the request header
+                }
+            });
+            console.log('Address added successfully:', response.data);
         } catch (error) {
-            console.error('Error deleting address:', error);
+            console.error('Error adding address:', error);
+            // Handle unauthorized error here, e.g., prompt user to login
+            if (error.response && error.response.status === 401) {
+                alert('You need to login to add an address.');
+            }
         }
     };
 
@@ -77,6 +92,10 @@ const CheckoutPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!isAuthenticated) {
+            alert('אנא הירשם או התחבר לפני ביצוע הקנייה');
+            return;
+        }
         if (currentStep < 4) {
             setCurrentStep(currentStep + 1);
         } else {
@@ -103,13 +122,12 @@ const CheckoutPage = () => {
                 <h1>צ'קאאוט</h1>
             </header>
             <div className="step-indicators">
-                <div className={`step ${currentStep >= 1 ? 'completed' : ''}`}>1</div>
-                <div className="step-line"></div>
-                <div className={`step ${currentStep >= 2 ? 'completed' : ''}`}>2</div>
-                <div className="step-line"></div>
-                <div className={`step ${currentStep >= 3 ? 'completed' : ''}`}>3</div>
-                <div className="step-line"></div>
-                <div className={`step ${currentStep >= 4 ? 'completed' : ''}`}>4</div>
+                {[1, 2, 3, 4].map((step) => (
+                    <React.Fragment key={step}>
+                        <div className={`step ${currentStep >= step ? 'completed' : ''}`}>{step}</div>
+                        {step < 4 && <div className="step-line"></div>}
+                    </React.Fragment>
+                ))}
             </div>
             <div className="checkout-content">
                 <div className="left-column">
@@ -249,11 +267,11 @@ const CheckoutPage = () => {
                 </div>
                 <div className="right-column">
                     <h6>סיכום הזמנה</h6>
-                    <ul className="product-list summary-list">
-                        {cartItems.map((item) => (
-                            <li key={item.id}>
+                    <ul className="summary-list">
+                        {cartItems.map((item, index) => (
+                            <li key={index}>
                                 <img src={item.images[0]} alt={item.name} />
-                                <div className="product-details">
+                                <div className="summary-details">
                                     <span>{item.name}</span>
                                     <span>{item.price} ש"ח</span>
                                     <span>כמות: {item.quantity}</span>
@@ -261,7 +279,7 @@ const CheckoutPage = () => {
                             </li>
                         ))}
                     </ul>
-                    <div className="total-price summary-total">
+                    <div className="total-summary">
                         <span>סה"כ:</span>
                         <span>{cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)} ש"ח</span>
                     </div>
@@ -271,4 +289,4 @@ const CheckoutPage = () => {
     );
 };
 
-export default CheckoutPage;
+export default CheckoutPage

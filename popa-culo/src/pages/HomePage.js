@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import ProductDisplay from '../components/ProductDisplay';
 
+
 const Root = styled(Box)(({ theme }) => ({
     position: 'relative',
     width: '100vw',

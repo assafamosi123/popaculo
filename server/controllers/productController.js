@@ -2,47 +2,35 @@ const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
-// Add a new product
-const addProduct = asyncHandler(async (req, res) => {
-    const { name, description, price } = req.body;
-    const images = req.files.map(file => file.path);
+// Update product stock
+const updateProductStock = asyncHandler(async (req, res) => {
+    const { productId, size } = req.body;
 
-    const product = new Product({
-        name,
-        description,
-        price,
-        images
-    });
-
-    const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
-});
-
-// Get all products
-const getProducts = asyncHandler(async (req, res) => {
-    const products = await Product.find({});
-    res.json(products);
-});
-
-const deleteProduct = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ message: 'Invalid product ID' });
-    }
-
-    const product = await Product.findById(id);
-
+    const product = await Product.findById(productId);
     if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+        res.status(404);
+        throw new Error('Product not found');
     }
 
-    await product.remove();
-    res.json({ message: 'Product removed successfully' });
+    const sizeToUpdate = product.sizes.find((s) => s.size === size);
+    if (sizeToUpdate) {
+        if (sizeToUpdate.stock > 0) {
+            sizeToUpdate.stock -= 1;
+            await product.save();
+            res.status(200).json({ message: 'Stock updated successfully', product });
+        } else {
+            res.status(400);
+            throw new Error('Out of stock');
+        }
+    } else {
+        res.status(404);
+        throw new Error('Size not found');
+    }
 });
 
 module.exports = {
     addProduct,
     getProducts,
     deleteProduct,
+    updateProductStock,
 };

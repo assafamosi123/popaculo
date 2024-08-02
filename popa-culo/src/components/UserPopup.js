@@ -7,6 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert'; // הוספת Alert עבור הודעות שגיאה
 import axios from 'axios';
 
 function UserPopup({ open, onClose }) {
@@ -29,10 +30,20 @@ function UserPopup({ open, onClose }) {
         setError('');
     };
 
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!email || !password || (!isLogin && (!name || password !== confirmPassword))) {
             setError('אנא מלא את כל השדות וודא שהסיסמאות תואמות.');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            setError('אנא הזן כתובת מייל תקינה.');
             return;
         }
 
@@ -51,7 +62,7 @@ function UserPopup({ open, onClose }) {
             onClose();
             window.location.reload(); // רענון הדף כדי לעדכן את ה-Header
         } catch (error) {
-            setError('שגיאה: לא הצלחנו להתחבר לשרת.');
+            setError('המייל או הסיסמא אינם');
         }
     };
 
@@ -109,7 +120,7 @@ function UserPopup({ open, onClose }) {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     )}
-                    {error && <DialogContentText color="error">{error}</DialogContentText>}
+                    {error && <Alert severity="error">{error}</Alert>}
                     <DialogActions>
                         <Button onClick={toggleForm}>
                             {isLogin ? 'אין לך חשבון? הירשם כאן' : 'כבר יש לך חשבון? התחבר כאן'}
