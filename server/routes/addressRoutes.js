@@ -1,11 +1,10 @@
-// routes/addressRoutes.js
 const express = require('express');
-const router = express.Router();
-const { protect } = require('../middlewares/authMiddleware');
 const { addAddress, getAddresses, deleteAddress } = require('../controllers/addressController');
+const { protect } = require('../middlewares/authMiddleware');
 
-router.post('/', protect, addAddress);
-router.get('/', protect, getAddresses);
-router.delete('/:id', protect, deleteAddress); // נתיב למחיקת כתובת
+const router = express.Router();
+
+router.route('/').get(protect, getAddresses).post(protect, addAddress);
+router.route('/:id').delete(protect, deleteAddress);
 
 module.exports = router;
