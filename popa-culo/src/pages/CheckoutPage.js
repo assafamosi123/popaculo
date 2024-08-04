@@ -1,14 +1,11 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import './CheckoutStyles.css';
 
 const CheckoutPage = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
-    const [addresses, setAddresses] = useState([]);
-    const [selectedAddress, setSelectedAddress] = useState(null);
     const [newAddress, setNewAddress] = useState({
         firstName: '',
         lastName: '',
@@ -19,36 +16,18 @@ const CheckoutPage = () => {
         phone: '',
         email: ''
     });
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [promoCode, setPromoCode] = useState('');
+    const [discount, setDiscount] = useState(0);
 
-    const cartItems = location.state?.cartItems || [];
+    const [cartItems, setCartItems] = useState(location.state?.cartItems || JSON.parse(localStorage.getItem('cartItems')) || []);
+    const validPromoCode = 'popaculo15';
 
     useEffect(() => {
-        const fetchAddresses = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    setIsAuthenticated(false);
-                    return;
-                }
-
-                setIsAuthenticated(true);
-
-                const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/address`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setAddresses(data);
-                if (data.length > 0) {
-                    setSelectedAddress(data[0]);
-                }
-            } catch (error) {
-                console.error('Error fetching addresses:', error);
-            }
-        };
-        fetchAddresses();
-    }, [navigate]);
+        if (!location.state?.cartItems) {
+            const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            setCartItems(storedCartItems);
+        }
+    }, [location.state]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -58,63 +37,48 @@ const CheckoutPage = () => {
         });
     };
 
-    const handleAddressSelect = (address) => {
-        setSelectedAddress(address);
-    };
-
-    const addAddress = async (addressData) => {
-        try {
-            const token = localStorage.getItem('token'); // Get token from localStorage
-            const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/address`, addressData, {
-                headers: {
-                    Authorization: `Bearer ${token}` // Include token in the request header
-                }
-            });
-            console.log('Address added successfully:', response.data);
-        } catch (error) {
-            console.error('Error adding address:', error);
-            // Handle unauthorized error here, e.g., prompt user to login
-            if (error.response && error.response.status === 401) {
-                alert('You need to login to add an address.');
-            }
+    const handlePromoCodeApply = () => {
+        if (promoCode === validPromoCode) {
+            setDiscount(0.15);
+            alert('קוד הנחה הוחל בהצלחה!');
+        } else {
+            setDiscount(0);
+            alert('קוד הנחה לא חוקי');
         }
     };
 
-    const handleAddAddress = async () => {
-        try {
-            const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/address`, newAddress);
-            setAddresses([...addresses, data.address]);
-            setSelectedAddress(data.address);
-        } catch (error) {
-            console.error('Error adding address:', error);
-        }
+    const handleAddAddress = () => {
+        localStorage.setItem('userAddress', JSON.stringify(newAddress));
+        alert('כתובת נשמרה בהצלחה');
+        setCurrentStep(2);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!isAuthenticated) {
-            alert('אנא הירשם או התחבר לפני ביצוע הקנייה');
+    const handleOrderSubmit = () => {
+        const storedAddress = JSON.parse(localStorage.getItem('userAddress'));
+        if (!storedAddress) {
+            alert('אנא הוסף כתובת לפני ביצוע ההזמנה');
             return;
         }
-        if (currentStep < 4) {
-            setCurrentStep(currentStep + 1);
-        } else {
-            try {
-                const addressToUse = selectedAddress ? selectedAddress : newAddress;
-                await axios.post(`${process.env.REACT_APP_SERVER}/api/order`, {
-                    ...addressToUse,
-                    cartItems
-                });
-                alert('ההזמנה בוצעה בהצלחה!');
-            } catch (error) {
-                console.error('Error placing order:', error);
-            }
-        }
+
+        // שליחת פרטי ההזמנה לשרת כדי לשלוח מייל
+        axios.post(`${process.env.REACT_APP_SERVER}/api/send-order-email`, {
+          address: storedAddress,
+          cartItems
+      })
+        .then(response => {
+            alert('ההזמנה בוצעה בהצלחה! מייל נשלח.');
+            // ניקוי העגלה והכתובת לאחר השליחה
+            localStorage.removeItem('cartItems');
+            localStorage.removeItem('userAddress');
+        })
+        .catch(error => {
+            console.error('Error sending order email:', error);
+            alert('שגיאה בשליחת ההזמנה');
+        });
     };
 
-    if (!cartItems || cartItems.length === 0) {
-        return <div className="checkout-page"><h2>אין מוצרים בעגלה</h2></div>;
-    }
+    const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const discountedPrice = (totalPrice - (totalPrice * discount)).toFixed(2);
 
     return (
         <div className="checkout-page">
@@ -122,90 +86,67 @@ const CheckoutPage = () => {
                 <h1>צ'קאאוט</h1>
             </header>
             <div className="step-indicators">
-                {[1, 2, 3, 4].map((step) => (
+                {[1, 2, 3].map((step) => (
                     <React.Fragment key={step}>
                         <div className={`step ${currentStep >= step ? 'completed' : ''}`}>{step}</div>
-                        {step < 4 && <div className="step-line"></div>}
+                        {step < 3 && <div className="step-line"></div>}
                     </React.Fragment>
                 ))}
             </div>
             <div className="checkout-content">
                 <div className="left-column">
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         {currentStep === 1 && (
                             <div className="section">
                                 <h6>כתובת למשלוח</h6>
-                                {addresses.length > 0 ? (
-                                    <>
-                                        <select onChange={(e) => handleAddressSelect(addresses.find(addr => addr._id === e.target.value))}>
-                                            {addresses.map(address => (
-                                                <option key={address._id} value={address._id}>
-                                                    {address.street} {address.streetNumber}, {address.city}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <button type="button" onClick={() => handleAddressDelete(selectedAddress._id)}>מחק כתובת</button>
-                                    </>
-                                ) : (
-                                    <p>לא נמצאו כתובות. אנא הוסף כתובת חדשה.</p>
-                                )}
-                                <div>
-                                    <h6>הוסף כתובת חדשה</h6>
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        placeholder="שם פרטי"
-                                        value={newAddress.firstName}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        placeholder="שם משפחה"
-                                        value={newAddress.lastName}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        name="street"
-                                        placeholder="רחוב"
-                                        value={newAddress.street}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        name="streetNumber"
-                                        placeholder="מספר"
-                                        value={newAddress.streetNumber}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        name="city"
-                                        placeholder="עיר"
-                                        value={newAddress.city}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        name="postalCode"
-                                        placeholder="מיקוד"
-                                        value={newAddress.postalCode}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                    <button type="button" onClick={handleAddAddress}>הוסף כתובת</button>
-                                </div>
-                            </div>
-                        )}
-                        {currentStep === 2 && (
-                            <div className="section">
-                                <h6>פרטי קשר</h6>
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    placeholder="שם פרטי"
+                                    value={newAddress.firstName}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="lastName"
+                                    placeholder="שם משפחה"
+                                    value={newAddress.lastName}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="street"
+                                    placeholder="רחוב"
+                                    value={newAddress.street}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="streetNumber"
+                                    placeholder="מספר"
+                                    value={newAddress.streetNumber}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="city"
+                                    placeholder="עיר"
+                                    value={newAddress.city}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="postalCode"
+                                    placeholder="מיקוד"
+                                    value={newAddress.postalCode}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                                 <input
                                     type="tel"
                                     name="phone"
@@ -222,71 +163,55 @@ const CheckoutPage = () => {
                                     onChange={handleInputChange}
                                     required
                                 />
+                                <button type="button" onClick={handleAddAddress}>שמור כתובת</button>
+                            </div>
+                        )}
+                        {currentStep === 2 && (
+                            <div className="section">
+                                <h6>פרטי המשלוח</h6>
+                                <p>כתובת: {newAddress.street}, {newAddress.streetNumber}, {newAddress.city}</p>
+                                <p>אימייל: {newAddress.email}</p>
+                                <p>טלפון: {newAddress.phone}</p>
+                                <button type="button" onClick={() => setCurrentStep(3)}>המשך</button>
                             </div>
                         )}
                         {currentStep === 3 && (
                             <div className="section">
-                                <h6>אמצעי תשלום</h6>
-                                <div>
-                                    <label>
-                                        <input type="radio" name="paymentMethod" value="creditCard" required />
-                                        כרטיס אשראי
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="paymentMethod" value="paypal" required />
-                                        PayPal
-                                    </label>
-                                </div>
-                            </div>
-                        )}
-                        {currentStep === 4 && (
-                            <div className="section">
                                 <h6>סקירת הזמנה</h6>
-                                <ul className="product-list">
+                                <ul className="cart-items">
                                     {cartItems.map((item) => (
                                         <li key={item.id}>
                                             <img src={item.images[0]} alt={item.name} />
                                             <div className="product-details">
                                                 <span>{item.name}</span>
+                                                <span>{item.size}</span>
                                                 <span>{item.price} ש"ח</span>
                                                 <span>כמות: {item.quantity}</span>
                                             </div>
                                         </li>
                                     ))}
                                 </ul>
+                                <div className="promo-code">
+                                    <input
+                                        type="text"
+                                        placeholder="הכנס קוד קופון"
+                                        value={promoCode}
+                                        onChange={(e) => setPromoCode(e.target.value)}
+                                    />
+                                    <button type="button" onClick={handlePromoCodeApply}>החל</button>
+                                </div>
                                 <div className="total-price">
                                     <span>סה"כ:</span>
-                                    <span>{cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)} ש"ח</span>
+                                    <span>{discountedPrice} ש"ח</span>
                                 </div>
+                                <button type="button" onClick={handleOrderSubmit}>בצע הזמנה</button>
                             </div>
                         )}
-                        <button type="submit" className="checkout-button" disabled={currentStep > 4}>
-                            {currentStep < 4 ? 'המשך' : 'בצע הזמנה'}
-                        </button>
                     </form>
-                </div>
-                <div className="right-column">
-                    <h6>סיכום הזמנה</h6>
-                    <ul className="summary-list">
-                        {cartItems.map((item, index) => (
-                            <li key={index}>
-                                <img src={item.images[0]} alt={item.name} />
-                                <div className="summary-details">
-                                    <span>{item.name}</span>
-                                    <span>{item.price} ש"ח</span>
-                                    <span>כמות: {item.quantity}</span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className="total-summary">
-                        <span>סה"כ:</span>
-                        <span>{cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)} ש"ח</span>
-                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-export default CheckoutPage
+export default CheckoutPage;

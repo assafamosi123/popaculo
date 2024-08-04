@@ -25,6 +25,7 @@ const CartTitle = styled(Box)(({ theme }) => ({
 const ListItemStyled = styled(ListItem)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
+    direction: 'rtl'
 }));
 
 const ListItemImage = styled('img')(({ theme }) => ({

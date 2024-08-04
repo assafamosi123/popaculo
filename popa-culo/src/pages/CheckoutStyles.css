@@ -1,186 +1,233 @@
 /* Base Styles */
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
-    margin: 0;
-    padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 2;
+  padding: 0;
 }
 
 h1, h6 {
-    margin: 0;
-    padding: 0;
-    color: #333;
+  margin: 2;
+  padding: 0;
+  color: #333;
 }
 
 /* Checkout Page Layout */
 .checkout-page {
-    max-width: 800px;
-    margin: 50px auto;
-    background-color: #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 8px;
+  max-width: 800px;
+  margin: 70px auto;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
 }
 
 .checkout-header {
-    text-align: center;
-    margin-bottom: 30px;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .step-indicators {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 35px;
+  align-items: baseline;
 }
 
 .step {
-    background-color: #e0e0e0;
-    color: #fff;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+  background-color: #e0e0e0;
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 3px;
 }
 
 .step.completed {
-    background-color: #4caf50;
+  background-color: hwb(9 9% 13%);
 }
 
 .step-line {
-    flex: 1;
-    height: 4px;
-    background-color: #e0e0e0;
-    margin: 0 10px;
-    border-radius: 2px;
+  flex: 1;
+  height: 4px;
+  background-color: #e0e0e0;
+  margin: 0 10px;
+  border-radius: 2px;
+  align-items: baseline ;
 }
 
 /* Form Layout */
 .checkout-content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .left-column {
-    flex: 1;
+  flex: 1;
 }
 
 .section {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .section h6 {
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: #555;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #555;
 }
 
 .section input, .section select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .section input:focus, .section select:focus {
-    border-color: #4caf50;
-    outline: none;
+  border-color: #4caf50;
+  outline: none;
 }
 
 .checkout-button {
-    width: 100%;
-    padding: 15px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
+  width: 100%;
+  padding: 15px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
 .checkout-button:hover {
-    background-color: #388e3c;
+  background-color: #388e3c;
 }
 
 .right-column {
-    background-color: #f7f7f7;
-    padding: 15px;
-    border-radius: 4px;
-    margin-top: 20px;
+  background-color: #f7f7f7;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
 }
 
 .right-column h6 {
-    margin-bottom: 10px;
-    color: #555;
+  margin-bottom: 10px;
+  color: #555;
 }
 
 /* Summary Styles */
 .summary-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  list-style-type:lower-roman;
+  padding: 0;
+  margin: 5;
+
 }
 
 .summary-list li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
 }
 
 .summary-list img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-right: 10px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 10px;
 }
 
 .summary-details {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  
 }
 
 .total-summary {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 15px;
-    margin-top: 15px;
-    border-top: 1px solid #ddd;
-    font-size: 18px;
-    font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  margin-top: 15px;
+  border-top: 1px solid #ddd;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .total-price {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 15px;
-    margin-top: 15px;
-    border-top: 1px solid #ddd;
-    font-size: 18px;
-    font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  margin-top: 15px;
+  border-top: 1px solid #ddd;
+  font-size: 18px;
+  font-weight: bold;
+  
+}
+/* עיצוב שלב 3 - סקירת הזמנה */
+.cart-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  direction: rtl; /* יישור מימין לשמאל */
+}
+
+.cart-items li {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+}
+
+.cart-items img {
+  width: 75px; /* גודל התמונות */
+  height: 75px; /* גודל התמונות */
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  text-align: right; /* יישור לימין */
+}
+
+.total-price {
+  display: flex;
+  justify-content: flex-end;
+  font-weight: bold;
+  font-size: 1.2em;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+  direction: rtl; /* יישור מימין לשמאל */
 }
 
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
-    .checkout-page {
-        padding: 15px;
-    }
+  .checkout-page {
+      padding: 15px;
+  }
 
-    .checkout-content {
-        flex-direction: column;
-    }
+  .checkout-content {
+      flex-direction: column;
+  }
 
-    .right-column {
-        margin-top: 20px;
-    }
+  .right-column {
+      margin-top: 20px;
+  }
 }

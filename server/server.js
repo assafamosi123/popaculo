@@ -8,6 +8,7 @@ const errorMiddleware = require('./middlewares/errorMiddleware');
 const productRoutes = require('./routes/productRoutes');
 const path = require('path');
 const addressRoutes = require('./routes/addressRoutes');
+const emailRoutes = require('./routes/emailRoutes');
 dotenv.config();
 
 connectDB();
@@ -24,6 +25,7 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/address', addressRoutes);
+app.use('/api/', emailRoutes); 
 app.use(errorMiddleware.notFound);
 app.use(errorMiddleware.errorHandler);
 
