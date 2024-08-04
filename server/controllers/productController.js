@@ -22,7 +22,7 @@ const addProduct = asyncHandler(async (req, res) => {
 const getProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({});
     res.json(products);
-});
+}); 
 
 const deleteProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
