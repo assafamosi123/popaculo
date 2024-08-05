@@ -16,7 +16,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://popaculofront.vercel.app' , 'https:://popaculo.com'], // אפשר גם גישה מlocalhost
+    origin: ['http://localhost:3000', 'https://popaculofront.vercel.app' , 'https:://www.popaculo.com'], // אפשר גם גישה מlocalhost
     credentials: true
 }));
 app.use(express.json());
