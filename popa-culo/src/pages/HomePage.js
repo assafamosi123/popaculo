@@ -67,7 +67,7 @@ const OverlayText = styled(Box)(({ theme }) => ({
 
 const OverlayButton = styled(Button)(({ theme }) => ({
     position: 'absolute',
-    bottom: '30px',
+    bottom: '500px',
     left: '50%',
     transform: 'translateX(-50%)',
     zIndex: 2,
@@ -162,7 +162,8 @@ function HomePage({ onAddToCart }) {
                     ))}
                 </Slider>
                 <OverlayButton variant="contained" onClick={handleShowCollections}>
-                    הקולקציות שלנו
+                 לקולקציית הקיץ שלנו
+                לחצו כאן 
                 </OverlayButton>
             </CarouselContainer>
             {showCollections && (

@@ -2,17 +2,18 @@ const mailgun = require('mailgun-js');
 const mg = mailgun({ apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN });
 
 exports.sendOrderEmail = (req, res) => {
-    const { address, cartItems } = req.body;
+    const { address, cartItems, deliveryMethod } = req.body;
 
-    if (!address || !cartItems) {
-        return res.status(400).json({ message: 'Missing address or cartItems' });
+    if (!address || !cartItems || !deliveryMethod) {
+        return res.status(400).json({ message: 'Missing address, cartItems, or deliveryMethod' });
     }
 
     const orderSummary = `
         <h3>Order Details</h3>
+        <p>Delivery Method: ${deliveryMethod === 'pickup' ? 'Self-Pickup' : 'Delivery'}</p>
         <p>Name: ${address.firstName} ${address.lastName}</p>
-        <p>Address: ${address.street} ${address.streetNumber}, ${address.city}</p>
-        <p>Postal Code: ${address.postalCode}</p>
+        <p>Address: ${deliveryMethod === 'delivery' ? `${address.street} ${address.streetNumber}, ${address.city}` : 'N/A'}</p>
+        <p>Postal Code: ${address.postalCode || 'N/A'}</p>
         <p>Phone: ${address.phone}</p>
         <p>Email: ${address.email}</p>
         <h4>Ordered Products:</h4>
@@ -26,10 +27,12 @@ exports.sendOrderEmail = (req, res) => {
         <p>Total: ${cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)} $</p>
     `;
 
+    const subjectText = `New Order - ${deliveryMethod === 'pickup' ? 'Self-Pickup' : 'Delivery'}`;
+
     const data = {
         from: 'popaculoooo@gmail.com',
         to: 'popaculoooo@gmail.com',
-        subject: 'New Order',
+        subject: subjectText,
         html: orderSummary,
     };
 

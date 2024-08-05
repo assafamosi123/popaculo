@@ -21,26 +21,29 @@ const SoldOutIcon = styled('img')(({ theme }) => ({
 const SizeButton = styled(Button)(({ theme }) => ({
     margin: '5px',
     flex: 1,
-    position: 'relative', // נוסיף יחס מיקום לצורך הוספת האייקון
+    direction: 'ltr',
 }));
 
 const ContainerStyled = styled(Grid)({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    
 });
 
 const ItemStyled = styled(Grid)({
-    marginBottom: '20px',
-    display: 'flex',
+    marginBottom: '50px',
+    display: 'block',
     flexDirection: 'column',
+    
 });
 
 const ProductCard = styled(Box)({
-    padding: '16px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    padding: '40px',
+    boxShadow: '0 17px 8px rgba(0,0,0,0.1)',
     borderRadius: '8px',
     backgroundColor: '#fff',
+    border : '5px',
 });
 
 const ProductImage = styled('img')({
@@ -115,7 +118,7 @@ const ProductDisplay = ({ products, onAddToCart }) => {
 
     return (
         <motion.div style={{ y: parallaxEffect }}>
-            <Box sx={{ mt: '1rem' }}>
+            <Box sx={{ mt: '2rem' }}>
                 <ContainerStyled container spacing={2}>
                     {products.map((product, index) => {
                         const { ref, inView } = useInView({ triggerOnce: true });
@@ -144,7 +147,7 @@ const ProductDisplay = ({ products, onAddToCart }) => {
                                         <Price variant="h6">{product.price} ש"ח</Price>
                                         <Box>
                                             <Typography variant="body2">בחר מידה:</Typography>
-                                            <div style={{ display: 'flex', flexDirection: 'row-reverse', width: '100%' }}>
+                                            <div style={{ display: 'flex', width: '100%' }}>
                                                 {['S', 'M', 'L'].map((size) => {
                                                     const sizeInfo = product.sizes.find(s => s.size === size);
                                                     const isSoldOut = sizeInfo && sizeInfo.quantity === 0;

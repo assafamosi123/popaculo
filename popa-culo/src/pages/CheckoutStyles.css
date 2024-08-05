@@ -5,78 +5,7 @@ body {
   color: #333;
   margin: 2;
   padding: 0;
-}
-/* Checkout Page Layout */
-.checkout-page {
-  max-width: 800px;
-  margin: 70px auto;
-  background-color: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  border-radius: 8px;
-  direction: rtl; /* יישור מימין לשמאל */
-}
-
-.step-indicators {
-  display: flex;
-  justify-content: flex-start; /* יישור לצד שמאל */
-  margin-bottom: 35px;
-  align-items: baseline;
-}
-
-.step-line {
-  flex: 1;
-  height: 4px;
-  background-color: #e0e0e0;
-  margin: 0 10px;
-  border-radius: 2px;
-  align-items: baseline;
-}
-
-.checkout-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.section {
-  margin-bottom: 20px;
-  text-align: right; /* יישור לימין */
-}
-
-.section input, .section select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  text-align: right; /* יישור לימין */
-}
-
-.terms {
-  text-align: right; /* יישור לימין */
-}
-
-.summary-list {
-  list-style-type: lower-roman;
-  padding: 0;
-  margin: 5;
-}
-
-.summary-list li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  justify-content: space-between; /* יישור הכותרות והטפסים */
-}
-
-h1, h6 {
-  margin: 2;
-  padding: 0;
-  color: #333;
+ 
 }
 
 /* Checkout Page Layout */
@@ -115,7 +44,7 @@ h1, h6 {
 }
 
 .step.completed {
-  background-color: hwb(9 9% 13%);
+  background-color: #4caf50;
 }
 
 .step-line {
@@ -124,18 +53,12 @@ h1, h6 {
   background-color: #e0e0e0;
   margin: 0 10px;
   border-radius: 2px;
-  align-items: baseline ;
 }
 
-/* Form Layout */
 .checkout-content {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.left-column {
-  flex: 1;
 }
 
 .section {
@@ -179,69 +102,7 @@ h1, h6 {
   background-color: #388e3c;
 }
 
-.right-column {
-  background-color: #f7f7f7;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 20px;
-}
-
-.right-column h6 {
-  margin-bottom: 10px;
-  color: #555;
-}
-
 /* Summary Styles */
-.summary-list {
-  list-style-type:lower-roman;
-  padding: 0;
-  margin: 5;
-
-}
-
-.summary-list li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.summary-list img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-right: 10px;
-}
-
-.summary-details {
-  display: flex;
-  flex-direction: column;
-  
-}
-
-.total-summary {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 15px;
-  margin-top: 15px;
-  border-top: 1px solid #ddd;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.total-price {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 15px;
-  margin-top: 15px;
-  border-top: 1px solid #ddd;
-  font-size: 18px;
-  font-weight: bold;
-  
-}
-/* עיצוב שלב 3 - סקירת הזמנה */
 .cart-items {
   list-style: none;
   padding: 0;
@@ -261,8 +122,8 @@ h1, h6 {
 }
 
 .cart-items img {
-  width: 75px; /* גודל התמונות */
-  height: 75px; /* גודל התמונות */
+  width: 75px;
+  height: 75px;
   object-fit: cover;
   border-radius: 8px;
 }
@@ -270,30 +131,62 @@ h1, h6 {
 .product-details {
   display: flex;
   flex-direction: column;
-  text-align: right; /* יישור לימין */
+  text-align: right;
 }
 
 .total-price {
   display: flex;
   justify-content: flex-end;
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1rem;
   padding-top: 20px;
   border-top: 1px solid #ddd;
-  direction: rtl; /* יישור מימין לשמאל */
+  direction: rtl;
+}
+.total-price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  text-align: right; /* Align text to the right */
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1em;
+}
+
+.breakdown-item.total {
+  font-weight: bold;
+  font-size: 1.2em;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+/* Modal for Terms */
+.terms-modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 100px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
   .checkout-page {
-      padding: 15px;
+    padding: 15px;
   }
 
   .checkout-content {
-      flex-direction: column;
+    flex-direction: column;
   }
 
   .right-column {
-      margin-top: 20px;
+    margin-top: 20px;
   }
 }
