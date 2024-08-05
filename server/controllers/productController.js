@@ -3,21 +3,31 @@ const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 // Add a new product
+// Add a new product
 const addProduct = asyncHandler(async (req, res) => {
-    const { name, description, price } = req.body;
+    const { name, description, price, sizes } = req.body;
     const images = req.files.map(file => file.path);
+
+    console.log('Received sizes:', sizes);
+
+    let parsedSizes;
+    try {
+        parsedSizes = JSON.parse(sizes);
+    } catch (error) {
+        return res.status(400).json({ message: 'Invalid sizes format' });
+    }
 
     const product = new Product({
         name,
         description,
         price,
-        images
+        images,
+        sizes: parsedSizes
     });
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
 });
-
 // Get all products
 const getProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({});

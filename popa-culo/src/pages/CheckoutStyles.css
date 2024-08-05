@@ -6,6 +6,72 @@ body {
   margin: 2;
   padding: 0;
 }
+/* Checkout Page Layout */
+.checkout-page {
+  max-width: 800px;
+  margin: 70px auto;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  direction: rtl; /* יישור מימין לשמאל */
+}
+
+.step-indicators {
+  display: flex;
+  justify-content: flex-start; /* יישור לצד שמאל */
+  margin-bottom: 35px;
+  align-items: baseline;
+}
+
+.step-line {
+  flex: 1;
+  height: 4px;
+  background-color: #e0e0e0;
+  margin: 0 10px;
+  border-radius: 2px;
+  align-items: baseline;
+}
+
+.checkout-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  margin-bottom: 20px;
+  text-align: right; /* יישור לימין */
+}
+
+.section input, .section select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  text-align: right; /* יישור לימין */
+}
+
+.terms {
+  text-align: right; /* יישור לימין */
+}
+
+.summary-list {
+  list-style-type: lower-roman;
+  padding: 0;
+  margin: 5;
+}
+
+.summary-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  justify-content: space-between; /* יישור הכותרות והטפסים */
+}
 
 h1, h6 {
   margin: 2;

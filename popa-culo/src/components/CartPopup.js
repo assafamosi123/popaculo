@@ -85,7 +85,7 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                 </Typography>
                 <Button variant="contained" color="primary" fullWidth style={{ marginTop: '16px' }} 
                  onClick={handleCheckout}>
-                    ֹֹֹֹֹֹ לתשלום
+                   לתשלום
                 </Button>
             </Box>
         </DrawerPaper>

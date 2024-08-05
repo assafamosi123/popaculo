@@ -1,30 +1,16 @@
-import styled from '@emotion/styled';
-import { DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import TextField from '@mui/material/TextField';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-
-const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
-    backgroundColor: '#8B513',
-    color: 'white',
-}));
-
-const CustomDialogContent = styled(DialogContent)(({ theme }) => ({
-    backgroundColor: '#FAEBD7',
-}));
-
-const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
-    backgroundColor: '#FAEBD7',
-}));
+import {
+    Dialog, DialogTitle, DialogContent, DialogActions,
+    TextField, Button, Box
+} from '@mui/material';
 
 const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => {
     const [productName, setProductName] = useState('');
     const [productImages, setProductImages] = useState([]);
     const [productDescription, setProductDescription] = useState('');
     const [productPrice, setProductPrice] = useState('');
+    const [sizes, setSizes] = useState({ S: 0, M: 0, L: 0 });
     const [previewImages, setPreviewImages] = useState([]);
 
     useEffect(() => {
@@ -33,6 +19,9 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
             setProductDescription(editingProduct.description);
             setProductPrice(editingProduct.price);
             setPreviewImages(editingProduct.images);
+            if (editingProduct.sizes) {
+                setSizes(editingProduct.sizes);
+            }
         }
     }, [editingProduct]);
 
@@ -43,6 +32,13 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
         setPreviewImages(imagePreviews);
     };
 
+    const handleSizeChange = (size, value) => {
+        setSizes(prevSizes => ({
+            ...prevSizes,
+            [size]: parseInt(value) || 0
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (productName && productImages.length > 0 && productDescription && productPrice) {
@@ -50,9 +46,12 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
             formData.append('name', productName);
             formData.append('description', productDescription);
             formData.append('price', productPrice);
+            formData.append('sizes', JSON.stringify(Object.entries(sizes).map(([size, quantity]) => ({ size, quantity }))));
             productImages.forEach(image => {
                 formData.append('images', image);
             });
+
+            console.log('Sending sizes:', sizes); // Debugging line
 
             try {
                 const token = localStorage.getItem('token');
@@ -71,6 +70,7 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
                 setProductImages([]);
                 setProductDescription('');
                 setProductPrice('');
+                setSizes({ S: 0, M: 0, L: 0 });
                 setPreviewImages([]);
             } catch (error) {
                 console.error('Error uploading product:', error);
@@ -80,8 +80,8 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <CustomDialogTitle>{editingProduct ? 'ערוך מוצר' : 'העלה מוצר חדש'}</CustomDialogTitle>
-            <CustomDialogContent>
+            <DialogTitle>{editingProduct ? 'ערוך מוצר' : 'העלה מוצר חדש'}</DialogTitle>
+            <DialogContent>
                 <Box component="form" onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
@@ -126,12 +126,39 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
                         onChange={(e) => setProductPrice(e.target.value)}
                         margin="normal"
                     />
-                    <CustomDialogActions>
+                    <Box marginTop="20px">
+                        <h4>ניהול מידות ומלאי</h4>
+                        <TextField
+                            variant="outlined"
+                            label="כמות במלאי - מידה S"
+                            type="number"
+                            value={sizes.S}
+                            onChange={(e) => handleSizeChange('S', e.target.value)}
+                            margin="normal"
+                        />
+                        <TextField
+                            variant="outlined"
+                            label="כמות במלאי - מידה M"
+                            type="number"
+                            value={sizes.M}
+                            onChange={(e) => handleSizeChange('M', e.target.value)}
+                            margin="normal"
+                        />
+                        <TextField
+                            variant="outlined"
+                            label="כמות במלאי - מידה L"
+                            type="number"
+                            value={sizes.L}
+                            onChange={(e) => handleSizeChange('L', e.target.value)}
+                            margin="normal"
+                        />
+                    </Box>
+                    <DialogActions>
                         <Button onClick={onClose} color="secondary">בטל</Button>
                         <Button type="submit" color="primary">{editingProduct ? 'שמור שינויים' : 'הוסף מוצר'}</Button>
-                    </CustomDialogActions>
+                    </DialogActions>
                 </Box>
-            </CustomDialogContent>
+            </DialogContent>
         </Dialog>
     );
 };

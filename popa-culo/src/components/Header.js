@@ -50,7 +50,7 @@ const Header = ({ onCartClick, onUserClick, onUploadClick }) => {
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
                         <img src={logo} alt="Logo" style={{ width: 40, height: 40, marginRight: 8 }} />
-                        <Typography variant="h6">Popa Culo</Typography>
+                        <Typography variant="h6">POPA CULO</Typography>
                     </Link>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
