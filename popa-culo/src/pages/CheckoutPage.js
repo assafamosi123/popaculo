@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Checkbox, FormControlLabel, Select, MenuItem, InputLabel, FormControl, Modal, Box } from '@mui/material';
 import './CheckoutStyles.css';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const CheckoutPage = () => {
     const location = useLocation();
@@ -58,40 +59,32 @@ const CheckoutPage = () => {
         setCurrentStep(2);
     };
 
-    const handleOrderSubmit = () => {
-        if (!isTermsChecked) {
-            alert('עליך לאשר את התקנון לפני ביצוע ההזמנה.');
-            return;
-        }
+    const handleOrderSubmit = (paymentData) => {
+    const storedAddress = JSON.parse(localStorage.getItem('userAddress'));
+    axios.post(`${process.env.REACT_APP_SERVER}/api/send-order-email`, {
+        address: storedAddress,
+        cartItems,
+        deliveryMethod, // Include delivery method in the payload
+        paymentData // Include payment data from PayPal
+    })
+    .then(response => {
+        alert('ההזמנה בוצעה בהצלחה! מייל נשלח.');
+        localStorage.removeItem('cartItems');
+        localStorage.removeItem('userAddress');
+    })
+    .catch(error => {
+        console.error('Error sending order email:', error);
+        alert('שגיאה בשליחת ההזמנה');
+    });
+};
 
-        const storedAddress = JSON.parse(localStorage.getItem('userAddress'));
-        if (!storedAddress) {
-            alert('אנא הוסף כתובת לפני ביצוע ההזמנה');
-            return;
-        }
-
-        axios.post(`${process.env.REACT_APP_SERVER}/api/send-order-email`, {
-            address: storedAddress,
-            cartItems,
-            deliveryMethod // Include delivery method in the payload
-        })
-        .then(response => {
-            alert('ההזמנה בוצעה בהצלחה! מייל נשלח.');
-            localStorage.removeItem('cartItems');
-            localStorage.removeItem('userAddress');
-        })
-        .catch(error => {
-            console.error('Error sending order email:', error);
-            alert('שגיאה בשליחת ההזמנה');
-        });
-    };
 
     const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const discountedPrice = (totalPrice - (totalPrice * discount)).toFixed(2);
     const finalPrice = (parseFloat(discountedPrice) + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2);
 
     return (
-      <div className="checkout-page">
+      <div className="checkout-page" style={{direction:'rtl'}}>
           <header className="checkout-header">
               <h1>צ'קאאוט</h1>
           </header>
@@ -103,7 +96,7 @@ const CheckoutPage = () => {
                   </React.Fragment>
               ))}
           </div>
-          <div className="checkout-content" style ={{direction:'rtl'}}>
+          <div className="checkout-content" >
               {currentStep === 1 && (
                   <div className="section" >
                       <h6>שיטת משלוח</h6>
@@ -154,70 +147,99 @@ const CheckoutPage = () => {
                   </div>
               )}
 
-              {currentStep === 3 && (
-                  <div className="section">
-                      <h6>סקירת הזמנה</h6>
-                      <ul className="cart-items">
-                          {cartItems.map((item) => (
-                              <li key={item.id}>
-                                  <img src={item.images[0]} alt={item.name} />
-                                  <div className="product-details">
-                                      <span>{item.name}</span>
-                                      <span>{item.size}</span>
-                                      <span>{item.price} ש"ח</span>
-                                      <span>כמות: {item.quantity}</span>
-                                  </div>
-                              </li>
-                          ))}
-                      </ul>
-                      
-                      <div className="total-price-breakdown">
-    <div className="breakdown-item">
-        <span>סה"כ עבור המוצרים:</span>
-        <span>{discountedPrice} ש"ח</span>
-    </div>
-    {deliveryMethod === 'delivery' && (
-        <div className="breakdown-item">
-            <span>דמי משלוח:</span>
-            <span>30 ש"ח</span>
-        </div>
-    )}
-    <div className="promo-code">
-                          <input
-                              type="text"
-                              placeholder="הכנס קוד קופון"
-                              value={promoCode}
-                              onChange={(e) => setPromoCode(e.target.value)}
-                          />
-                          <Button variant="contained" onClick={handlePromoCodeApply}>החל</Button>
-                      </div>
-    <div className="breakdown-item total">
-      
-        <span>סה"כ לתשלום:</span>
-        <span>{finalPrice} ש"ח</span>
-    </div>
-</div>
-                      <FormControlLabel
-                          control={
-                              <Checkbox checked={isTermsChecked} onChange={(e) => setIsTermsChecked(e.target.checked)} />
-                          }
-                          label={
-                              <span>
-                                  אני מאשר/ת את <a href="#" onClick={() => setIsModalOpen(true)}>התקנון ותנאי השימוש</a>
-                              </span>
-                          }
-                      />
-                      <Button variant="contained" onClick={handleOrderSubmit} className="place-order-button" disabled={!isTermsChecked}>בצע הזמנה</Button>
-                  </div>
-              )}
+{currentStep === 3 && (
+    <PayPalScriptProvider options={{ "client-id": "AdKasZ1ybt8E2Rmz2uk97exEIBoQSrq4zfQ6a605njDYTIY3MgsXj2j7pP3RBzcB8Jrn96pV_ItcDPaZ", currency: "ILS" }}>
+        <div className="section">
+            <h6>סקירת הזמנה</h6>
+            <ul className="cart-items">
+                {cartItems.map((item) => (
+                    <li key={item.id}>
+                        <img src={item.images[0]} alt={item.name} />
+                        <div className="product-details">
+                            <span>{item.name}</span>
+                            <span>{item.size}</span>
+                            <span>{item.price} ש"ח</span>
+                            <span>כמות: {item.quantity}</span>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            
+            <div className="total-price-breakdown">
+                <div className="breakdown-item">
+                    <span>סה"כ עבור המוצרים:</span>
+                    <span>{discountedPrice} ש"ח</span>
+                </div>
+                {deliveryMethod === 'delivery' && (
+                    <div className="breakdown-item">
+                        <span>דמי משלוח:</span>
+                        <span>30 ש"ח</span>
+                    </div>
+                )}
+                <div className="promo-code">
+                    <input
+                        type="text"
+                        placeholder="הכנס קוד קופון"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                    />
+                    <Button variant="contained" onClick={handlePromoCodeApply}>החל</Button>
+                </div>
+                <div className="breakdown-item total">
+                    <span>סה"כ לתשלום:</span>
+                    <span>{finalPrice} ש"ח</span>
+                </div>
+            </div>
 
-              <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                  <Box className="terms-modal">
-                      <h2>תקנון ותנאי שימוש</h2>
-                      <p>כאן תוכל להכניס את התקנון ותנאי השימוש של האתר.</p>
-                      <Button onClick={() => setIsModalOpen(false)}>סגור</Button>
-                  </Box>
-              </Modal>
+            <FormControlLabel
+                control={
+                    <Checkbox checked={isTermsChecked} onChange={(e) => setIsTermsChecked(e.target.checked)} />
+                }
+                label={
+                    <span>
+                        אני מאשר/ת את <a href="#" onClick={() => setIsModalOpen(true)}>התקנון ותנאי השימוש</a>
+                    </span>
+                }
+            />
+
+            <PayPalButtons
+                style={{ layout: 'vertical' }}
+                createOrder={(data, actions) => {
+                    if (isTermsChecked) {
+                        alert('עליך לאשר את התקנון לפני ביצוע ההזמנה.');
+                        return;
+                    }
+
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: finalPrice
+                            }
+                        }]
+                    });
+                }}
+                onApprove={(data, actions) => {
+                    return actions.order.capture().then(details => {
+                        alert('תשלום הצליח! תודה ' + details.payer.name.given_name);
+                        handleOrderSubmit(); // שלח את פרטי ההזמנה לאחר אישור התשלום
+                    });
+                }}
+                onError={(err) => {
+                    console.error('Error in PayPal transaction', err);
+                    alert('שגיאה בתהליך התשלום');
+                }}
+            />
+        </div>
+    </PayPalScriptProvider>
+)}
+
+<Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+    <Box className="terms-modal">
+        <h2>תקנון ותנאי שימוש</h2>
+        <p>כאן תוכל להכניס את התקנון ותנאי השימוש של האתר.</p>
+        <Button onClick={() => setIsModalOpen(false)}>סגור</Button>
+    </Box>
+</Modal>
           </div>
       </div>
   );
