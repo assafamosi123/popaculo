@@ -68,7 +68,10 @@ const CheckoutPage = () => {
         paymentData // Include payment data from PayPal
     })
     .then(response => {
-        alert('ההזמנה בוצעה בהצלחה! מייל נשלח.');
+        alert('תודה על הקנייה! ההזמנה הושלמה. ניצור איתך קשר בהקדם לפרטים או הודעות נוספות. מוזמן לשלוח הודעה באינסטגרם @popaculo שלנו ונענה לך בהקדם.');
+        if (window.confirm('לחץ על אישור כדי לחזור למסך הבית.')) {
+            window.location.href = '/';
+        }
         localStorage.removeItem('cartItems');
         localStorage.removeItem('userAddress');
     })
