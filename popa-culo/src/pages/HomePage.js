@@ -20,15 +20,14 @@ const Root = styled(Box)(({ theme }) => ({
     justifyContent: 'revert-layer',
     alignItems: 'center',
     margin: 0,
-    backgroundColor: 'rgba(163,78,78,0.63)',
+    backgroundColor: 'rgb(243, 165, 187)',
     overflowX: 'hidden',
 }));
 
 const Header = styled('div')(({ theme }) => ({
     zIndex: 2,
-    fontFamily: 'Cinzel Decorative, sans-serif',
     textAlign: 'center',
-    color: 'rgb(168,28,81)',
+    
     margin: '30px',
 }));
 
@@ -56,21 +55,23 @@ const CarouselImage = styled('img')(({ theme }) => ({
 }));
 
 const OverlayText = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
     position: 'absolute',
     top: '10%',
     width: '100%',
     textAlign: 'center',
     zIndex: 1,
-    padding: 2,
-    marginTop: '0px',
+    padding: 4,
+    marginTop: '10px',
 }));
 
 const OverlayButton = styled(Button)(({ theme }) => ({
-    position: 'absolute',
-    bottom: '500px',
-    left: '50%',
-    transform: 'translateX(-50%)',
+    marginTop: '20px', // רווח בין הכיתוב ללחצן
     zIndex: 2,
+    alignSelf: 'center', // מוודא שהלחצן יהיה מיושר במרכז מתחת לכיתוב
 }));
 
 function HomePage({ onAddToCart }) {
@@ -130,28 +131,34 @@ function HomePage({ onAddToCart }) {
     };
 
     const sampleImages = [
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722232981/image1_Large_zboluw',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722234372/image2_Large_a3upax.png',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1622231344038/image2_Large_a3upax',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722943068/background3_osayet.png',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722943068/background2_mzckxx.png',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722943068/backgroun1_mqa1qs.png'
     ];
 
     return (
         <Root>
             <CarouselContainer>
-                <OverlayText>
-                    <motion.div
-                        initial={{ opacity: 0, y: -100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <Typography component="h1" variant="h2" sx={{ color: 'rgb(168,28,81)', marginBottom: '10px' }}>
-                            Popa Culo
-                        </Typography>
-                        <Typography variant="h5" sx={{ color: '#a81c51', fontFamily: 'CustomFont', textAlign: 'center', marginTop: '20px' }}>
-                            ברוכים הבאים לאתר שלנו! כאן תוכלו למצוא את הקולקציות היפות והאיכותיות ביותר של בגדי ים.
-                        </Typography>
-                    </motion.div>
-                </OverlayText>
+            <OverlayText>
+    <motion.div
+        initial={{ opacity: 0, y: -100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+    >
+        <Typography component="h1" variant="h2" sx={{ color: 'rgb(168,28,81)', marginBottom: '10px' }}>
+            Popa Culo
+        </Typography>
+        <Typography variant="h5" sx={{ color: '#a81c51', textAlign: 'center', marginTop: '20px' }}>
+            Welcome to Popa Culo 
+        </Typography>
+        <Typography style ={{color: '#a81c51', textAlign: 'center' , fontSize:'20px'}}>
+            hand made swimewear
+        </Typography>
+    </motion.div>
+    <OverlayButton variant="contained" onClick={handleShowCollections}>
+        shop now
+    </OverlayButton>
+</OverlayText>
                 <Slider {...carouselSettings}>
                     {sampleImages.map((src, index) => (
                         <CarouselImage
@@ -161,16 +168,13 @@ function HomePage({ onAddToCart }) {
                         />
                     ))}
                 </Slider>
-                <OverlayButton variant="contained" onClick={handleShowCollections}>
-                 לקולקציית הקיץ שלנו
-                לחצו כאן 
-                </OverlayButton>
+                
             </CarouselContainer>
             {showCollections && (
                 <Box component="section" sx={{ marginTop: '40px' }}>
                     <Container maxWidth="lg">
                         <Typography variant="h4" gutterBottom>
-                            הקולקציות שלנו
+                            לקולקציית מה שענבר ותמר יבחרו
                         </Typography>
                         <ProductDisplay products={products} onAddToCart={onAddToCart} />
                     </Container>

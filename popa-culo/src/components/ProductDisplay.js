@@ -12,17 +12,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import soldOutIcon from '../assets/SOLDOUT.png';
 
-const SoldOutIcon = styled('img')(({ theme }) => ({
-    width: '40px',
-    height: '40px',
-    marginLeft: '5px',
-}));
 
-const SizeButton = styled(Button)(({ theme }) => ({
-    margin: '5px',
-    flex: 1,
-    direction: 'ltr',
-}));
 
 const ContainerStyled = styled(Grid)({
     display: 'flex',
@@ -65,6 +55,7 @@ const ButtonGroup = styled(Box)({
     marginTop: '16px',
     display: 'flex',
     justifyContent: 'center',
+    
 });
 
 const SliderCounter = styled(Typography)({
@@ -81,6 +72,24 @@ const DialogImage = styled('img')({
     width: '100%',
     borderRadius: '8px',
 });
+const SoldOutIcon = styled('img')(({ theme }) => ({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '60px',
+    height: '60px',
+    transform: 'translate(-50%, -50%) rotate(-30deg)',
+    opacity: 0.7,
+    pointerEvents: 'none', // This makes sure the icon doesn't block button interactions
+}));
+
+const SizeButton = styled(Button)(({ theme }) => ({
+    margin: '5px',
+    flex: 1,
+    direction: 'ltr',
+    backgroundColor: '#b78383',
+    position: 'relative', // Important for positioning the SoldOutIcon absolutely within the button
+}));
 
 const ProductDisplay = ({ products, onAddToCart }) => {
     const [selectedSize, setSelectedSize] = useState({});
@@ -155,8 +164,8 @@ const ProductDisplay = ({ products, onAddToCart }) => {
                                                     return (
                                                         <SizeButton
                                                             key={size}
-                                                            variant={selectedSize[index] === size ? 'contained' : 'outlined'}
-                                                            color="primary"
+                                                            variant={selectedSize[index] === size ? 'contained' : 'outline='}
+                                                        
                                                             onClick={() => handleSizeChange(index, size)}
                                                             disabled={isSoldOut}
                                                         >
