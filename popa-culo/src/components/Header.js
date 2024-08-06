@@ -43,14 +43,14 @@ const Header = ({ onCartClick, onUserClick, onUploadClick }) => {
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}>
             <Toolbar sx={{ justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton color="inherit" onClick={onCartClick}>
+                    <IconButton color="inherit" style={{color:'white'}} onClick={onCartClick}>
                         <ShoppingCartIcon />
                     </IconButton>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
                         <img src={logo} alt="Logo" style={{ width: 40, height: 40, marginRight: 8 }} />
-                        <Typography variant="h6">POPA CULO</Typography>
+                        <Typography variant="h6" style={{color:'white'}}>POPA CULO</Typography>
                     </Link>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -62,7 +62,8 @@ const Header = ({ onCartClick, onUserClick, onUploadClick }) => {
                             <Menu
                                 anchorEl={anchorEl}
                                 anchorOrigin={{
-                                    vertical: 'top',
+
+                                    vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                                 keepMounted
@@ -74,7 +75,7 @@ const Header = ({ onCartClick, onUserClick, onUploadClick }) => {
                                 onClose={handleClose}
                             >
                                 {user.isAdmin && (
-                                    <MenuItem onClick={onUploadClick}>
+                                    <MenuItem  onClick={onUploadClick}>
                                         <AddCircleIcon /> העלאת מוצר
                                     </MenuItem>
                                 )}
