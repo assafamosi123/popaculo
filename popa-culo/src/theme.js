@@ -14,7 +14,7 @@ const theme = createTheme({
     },
     palette: {
         primary: {
-            main: 'rgba(200, 160, 130, 0.6)',
+            main: 'rgba(230, 168, 161, 0.85)',
         },
         secondary: {
             main: '#FAEBD7',

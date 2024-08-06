@@ -20,7 +20,7 @@ const Root = styled(Box)(({ theme }) => ({
     justifyContent: 'revert-layer',
     alignItems: 'center',
     margin: 0,
-    backgroundColor: 'rgb(243, 165, 187)',
+    backgroundColor: '#e9d3d3',
     overflowX: 'hidden',
 }));
 
@@ -145,14 +145,12 @@ function HomePage({ onAddToCart }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
     >
-        <Typography component="h1" variant="h2" sx={{ color: 'rgb(168,28,81)', marginBottom: '10px' }}>
+        <Typography component="h1" variant="h2" sx={{ color: 'white', marginBottom: '10px' }}>
             Popa Culo
         </Typography>
-        <Typography variant="h5" sx={{ color: '#a81c51', textAlign: 'center', marginTop: '20px' }}>
-            Welcome to Popa Culo 
-        </Typography>
-        <Typography style ={{color: '#a81c51', textAlign: 'center' , fontSize:'20px'}}>
-            hand made swimewear
+        
+        <Typography style ={{color: 'white', textAlign: 'center' , fontSize:'20px'}}>
+            hand made swimewear 
         </Typography>
     </motion.div>
     <OverlayButton variant="contained" onClick={handleShowCollections}>
