@@ -69,7 +69,7 @@ const AppContent = ({ cartOpen, setCartOpen, userPopupOpen, setUserPopupOpen, up
                 <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
             <CartPopup open={cartOpen} onClose={() => setCartOpen(false)} cartItems={cartItems} onDeleteFromCart={handleDeleteFromCart} onCheckout={handleCheckout} />
-            <UserPopup open={userPopupOpen} onClose={() => setUserPopupOpen(false)} />
+         
             <UploadProductModal open={uploadModalOpen} onClose={() => setUploadModalOpen(false)} onAddProduct={handleAddProduct} />
         </>
     );

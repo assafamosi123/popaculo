@@ -44,7 +44,7 @@ body {
 }
 
 .step.completed {
-  background-color: #4caf50;
+  background-color: rgba(230, 168, 161, 0.85);
 }
 
 .step-line {
@@ -81,14 +81,14 @@ body {
 }
 
 .section input:focus, .section select:focus {
-  border-color: #4caf50;
+  border-color: rgba(230, 168, 161, 0.85);
   outline: none;
 }
 
 .checkout-button {
   width: 100%;
   padding: 15px;
-  background-color: #4caf50;
+  background-color: rgba(230, 168, 161, 0.85);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -99,7 +99,7 @@ body {
 }
 
 .checkout-button:hover {
-  background-color: #388e3c;
+  background-color: rgba(230, 168, 161, 0.85);
 }
 
 /* Summary Styles */

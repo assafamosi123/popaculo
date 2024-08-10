@@ -26,70 +26,27 @@ const Header = ({ onCartClick, onUserClick, onUploadClick }) => {
         }
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setUser(null);
-    };
-
-    const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    
 
     return (
-        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}>
-            <Toolbar sx={{ justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton color="inherit" style={{color:'white'}} onClick={onCartClick}>
-                        <ShoppingCartIcon />
-                    </IconButton>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
-                        <img src={logo} alt="Logo" style={{ width: 40, height: 40, marginRight: 8 }} />
-                        <Typography variant="h6" style={{color:'white'}}>POPA CULO</Typography>
-                    </Link>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    {user ? (
-                        <>
-                            <Avatar onClick={handleMenu} sx={{ cursor: 'pointer' }}>
-                                {user.name.charAt(0)}
-                            </Avatar>
-                            <Menu
-                                anchorEl={anchorEl}
-                                anchorOrigin={{
-
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                            >
-                                {user.isAdmin && (
-                                    <MenuItem  onClick={onUploadClick}>
-                                        <AddCircleIcon /> העלאת מוצר
-                                    </MenuItem>
-                                )}
-                                <MenuItem onClick={handleLogout}>התנתקות</MenuItem>
-                            </Menu>
-                        </>
-                    ) : (
-                        <IconButton color="inherit" onClick={onUserClick}>
-                            <AccountCircleIcon />
-                        </IconButton>
-                    )}
-                </Box>
-            </Toolbar>
-        </AppBar>
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton color="inherit" style={{ color: 'white' }} onClick={onCartClick}>
+                    <ShoppingCartIcon />
+                </IconButton>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 0}}>
+                <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
+                    <img src={logo} alt="Logo" style={{ width: 50, height: 50, marginRight:8}} />
+                    <Typography variant="h6" style={{ color: 'white' }}>POPA CULO</Typography>
+                </Link>
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+                {/* Add any other icons or elements you want on the right side of the header */}
+            </Box>
+        </Toolbar>
+    </AppBar>
     );
 };
 

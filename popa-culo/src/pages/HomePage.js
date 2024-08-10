@@ -44,6 +44,20 @@ const CarouselContainer = styled(Box)(({ theme }) => ({
     width: '100%',
     marginTop: 'auto',
     position: 'static',
+    '.desktop-carousel': {
+        display: 'block',
+    },
+    '.mobile-carousel': {
+        display: 'none',
+    },
+    '@media (max-width: 768px)': {
+        '.desktop-carousel': {
+            display: 'none',
+        },
+        '.mobile-carousel': {
+            display: 'block',
+        },
+    },
 }));
 
 const CarouselImage = styled('img')(({ theme }) => ({
@@ -79,6 +93,7 @@ function HomePage({ onAddToCart }) {
     const [products, setProducts] = useState([]);
     const productDisplayRef = useRef(null);
     const [openSizeChart, setOpenSizeChart] = useState(false);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -112,17 +127,14 @@ function HomePage({ onAddToCart }) {
         setOpenSizeChart(false);
     };
 
-    const carouselSettings = {
-        dots: false,
-        infinite: true,
-        speed: 1000,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3000,
-    };
+    const desktopImages = [
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
+     'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg'
+    ];
 
-    const sampleImages = [
+    const mobileImages = [
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_7921_msicxw.jpg',
@@ -131,6 +143,17 @@ function HomePage({ onAddToCart }) {
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_1585_aiti4s.jpg'
         
     ];
+
+
+    const carouselSettings = {
+        dots: false,
+        infinite: true ,
+        speed: 1000,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 3000,
+    };
 
     return (
         <Root>
@@ -152,15 +175,34 @@ function HomePage({ onAddToCart }) {
                         shop now
                     </OverlayButton>
                 </OverlayText>
-                <Slider {...carouselSettings}>
-                    {sampleImages.map((src, index) => (
-                        <CarouselImage
-                            key={index}
-                            src={src}
-                            alt={`Sample ${index}`}
-                        />
-                    ))}
-                </Slider>
+              
+                    {/* Desktop Images */}
+                    <div className="desktop-carousel">
+                    <Slider {...carouselSettings}>
+                        {desktopImages.map((src, index) => (
+                            <CarouselImage
+                                key={index}
+                                src={src}
+                                alt={`Desktop Image ${index}`}
+                            />
+                        ))}
+                        </Slider>
+                    </div>
+                    
+                  
+                    {/* Mobile Images */}
+                    <div className="mobile-carousel">
+                    <Slider {...carouselSettings}>
+                        {mobileImages.map((src, index) => (
+                            <CarouselImage
+                                key={index}
+                                src={src}
+                                alt={`Mobile Image ${index}`}
+                            />
+                        ))}
+                        </Slider>
+                    </div>
+                
             </CarouselContainer>
             {showCollections && (
            <Box component="section" ref={productDisplayRef} sx={{ marginTop: '40px' }}>

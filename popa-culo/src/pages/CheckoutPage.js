@@ -28,7 +28,7 @@ const CheckoutPage = () => {
     const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState(location.state?.cartItems || JSON.parse(localStorage.getItem('cartItems')) || []);
-    const [isPaymentSuccessModalOpen, setIsPaymentSuccessModalOpen] = useState(false);
+    
 
     const validPromoCode = 'popaculo10';
     const deliveryFee = 30;
@@ -60,7 +60,7 @@ const CheckoutPage = () => {
 
     const handleAddAddress = () => {
         localStorage.setItem('userAddress', JSON.stringify(newAddress));
-        alert('פרטים נשמרו בהצלחה');
+       
         setCurrentStep(2);
     };
 
@@ -136,7 +136,6 @@ const CheckoutPage = () => {
                     <div className="section">
                         <h6>שיטת משלוח</h6>
                         <FormControl fullWidth>
-                            <InputLabel id="delivery-method-label">בחר שיטת משלוח</InputLabel>
                             <Select
                                 labelId="delivery-method-label"
                                 id="delivery-method"
@@ -144,7 +143,7 @@ const CheckoutPage = () => {
                                 onChange={(e) => setDeliveryMethod(e.target.value)}
                             >
                                 <MenuItem value="delivery">משלוח (תוספת של 30 ש"ח)</MenuItem>
-                                <MenuItem value="pickup">איסוף עצמי</MenuItem>
+                                <MenuItem value="pickup">איסוף עצמי מגני תקווה או קריית אונו </MenuItem>
                             </Select>
                         </FormControl>
                         {deliveryMethod === 'delivery' && (
@@ -264,15 +263,55 @@ const CheckoutPage = () => {
                 </PayPalScriptProvider>
             )}
 
-            <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <Box className="terms-modal">
-                    <Typography variant="h6">תקנון ותנאי שימוש</Typography>
-                    <Typography variant="body1">
-                        כאן תוכל להכניס את התקנון ותנאי השימוש של האתר.
-                    </Typography>
-                    <Button onClick={() => setIsModalOpen(false)}>סגור</Button>
-                </Box>
-            </Modal>
+<Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+    <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '90%',
+        maxHeight: '90%',
+        backgroundColor: 'background.paper',
+        padding: 4,
+        overflowY: 'auto', // מאפשר גלילה אנכית אם התוכן חורג מהגובה
+        borderRadius: '8px',
+        boxShadow: 24,
+        outline: 'none',
+        direction : 'rtl',
+    }}>
+        <Typography variant="h6" gutterBottom>
+            תקנון ותנאי שימוש
+        </Typography>
+        <Typography variant="body1" paragraph>
+            ברוכים הבאים לחנות הבגדי ים שלנו. אנו מבקשים לקרוא בעיון את התקנון ותנאי השימוש לפני רכישת מוצר מהחנות. עצם השימוש באתר ורכישת מוצרים מהווה הסכמה לתנאים אלו.
+            <br /><br />
+            <strong>מדיניות רכישה ותשלום</strong>
+            <br />
+            כל הרכישות המתבצעות דרך האתר מאובטחות בצורה מלאה. ניתן לשלם באמצעות כרטיסי אשראי, PayPal או כל אמצעי תשלום אחר כפי שיתעדכן מעת לעת.
+            <br />
+            כל המחירים באתר כוללים מע"מ, אלא אם צוין אחרת.
+            <br /><br />
+            <strong>מדיניות משלוחים</strong>
+            <br />
+            אנו מספקים שירותי משלוח לכל חלקי הארץ, וזמן המשלוח עשוי להשתנות בהתאם למיקום הלקוח. אנו מתחייבים לעשות את מירב המאמצים כדי לספק את המוצרים במהירות האפשרית.
+            <br />
+            מרגע שהמוצר יצא לדרך, האחריות על המשלוח עוברת לשירות המשלוחים. במקרה של בעיה כלשהי, אנו נסייע ככל האפשר לפתרון הבעיה.
+            <br /><br />
+            <strong>מדיניות החזרות והחלפות</strong>
+            <br />
+            בהתאם לאופי המוצרים המוצעים בחנות (בגדי ים), לא ניתן לבצע החזרות או החלפות על מוצרים שנרכשו.
+            <br />
+            <strong>אחריות ושירות לקוחות</strong>
+            <br />
+            האחריות על המוצרים היא בהתאם לתנאים המפורטים על ידי היצרן. החנות לא תישא באחריות לנזק הנגרם כתוצאה משימוש לא נכון במוצר.
+            <br />
+            אנו זמינים לכל שאלה, בקשה או בעיה  בעמוד האינסטגרם שלנו @popaculo ונשמח לעמוד לרשותכם.
+        </Typography>
+        <Button onClick={() => setIsModalOpen(false)} variant="contained" sx={{ mt: 2 }}>
+            סגור
+        </Button>
+    </Box>
+</Modal>
         </div>
     </div>
 );
