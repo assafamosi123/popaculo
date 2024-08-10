@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
 const DrawerPaper = styled(Drawer)(({ theme }) => ({
-    width: 300,
+    width: 400, // הגדלת הרוחב
     top: '20px',
 }));
 
@@ -25,14 +25,20 @@ const CartTitle = styled(Box)(({ theme }) => ({
 const ListItemStyled = styled(ListItem)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between', // יישור רווח בין הפריטים
+    padding: theme.spacing(2),
     direction: 'rtl',
+    backgroundColor: '#f9f9f9', // רקע בהיר לפריטים
+    marginBottom: theme.spacing(1),
+    borderRadius: '8px',
 }));
 
 const ListItemImage = styled('img')(({ theme }) => ({
     marginRight: theme.spacing(2),
-    width: 50,
-    height: 50,
+    width: 80, // הגדלת גודל התמונה
+    height: 80,
     objectFit: 'cover',
+    borderRadius: '8px',
 }));
 
 const CartPopup = ({ open, onClose }) => {

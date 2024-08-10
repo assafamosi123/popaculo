@@ -103,7 +103,7 @@ const ProductDisplay = ({ products }) => {
     const [currentProductImages, setCurrentProductImages] = useState([]);
     const { scrollY } = useScroll();
     const parallaxEffect = useTransform(scrollY, [0, 300], [0, 2000]);
-
+    const [openSizeChart, setOpenSizeChart] = useState(false);
     const handleSizeChange = (index, size) => {
         setSelectedSize({ ...selectedSize, [index]: size });
     };
@@ -121,7 +121,7 @@ const ProductDisplay = ({ products }) => {
 
     const handleAddToCart = (product, selectedSize) => {
         const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const [openSizeChart, setOpenSizeChart] = useState(false);
+        
         // Find the selected size object
         const sizeObject = product.sizes.find(size => size.size === selectedSize);
         
