@@ -182,7 +182,7 @@ const CheckoutPage = () => {
                 )}
 
                 {currentStep === 3 && (
-                    <PayPalScriptProvider options={{ "client-id": "AdKasZ1ybt8E2Rmz2uk97exEIBoQSrq4zfQ6a605njDYTIY3MgsXj2j7pP3RBzcB8Jrn96pV_ItcDPaZ", currency: "ILS" }}>
+                    <PayPalScriptProvider options={{ "client-id": "ASy1080U8X4oN9b6-Xswql6HVtWkyG0a4_mXHCnSB__Rx3OOz2YLfOL_3nxPz7hgA-voqLKocxSGqcnt", currency: "ILS" }}>
                         <div className="section">
                             <h6>סקירת הזמנה</h6>
                             <ul className="cart-items">
