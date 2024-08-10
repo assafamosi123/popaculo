@@ -62,10 +62,20 @@ const SliderCounter = styled(Typography)({
     padding: '4px 8px',
     borderRadius: '8px',
 });
-
+const FullScreenDialog = styled(Dialog)({
+    '& .MuiDialog-paper': {
+        margin: 0, // מבטל מרווחים
+        width: '100%',
+        height: '100%',
+        maxWidth: 'none',
+    },
+});
 const DialogImage = styled('img')({
     width: '100%',
-    borderRadius: '8px',
+
+    maxHeight: '100vh', // מגביל את גובה התמונה לגובה המסך
+    // מבטיח שהתמונה תותאם לגבולות המסך מבלי לחתו אותה
+    borderRadius: '12px',
 });
 const SoldOutIcon = styled('img')(({ theme }) => ({
     position: 'absolute',
@@ -111,32 +121,50 @@ const ProductDisplay = ({ products }) => {
 
     const handleAddToCart = (product, selectedSize) => {
         const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    
+        const [openSizeChart, setOpenSizeChart] = useState(false);
         // Find the selected size object
         const sizeObject = product.sizes.find(size => size.size === selectedSize);
-       
-        console.log(`Product added to cart: ${product.name}, Size: ${selectedSize}` );
-        console.log(sizeObject.quantity);
-    
-        // Create a cart item with product details, size, and quantity
-        const cartItem = {
-            _id: product._id,
-            name: product.name,
-            price: product.price,
-            images: product.images,
-            size: sizeObject.size,  // Added size
-            sizeId: sizeObject._id,  // Added sizeId
-            quantity: 1// Default quantity
-        };
-    
-        // Add to cart items
-        existingCartItems.push(cartItem);
+        
+        // Check if the item with the same product ID and size already exists in the cart
+        const existingCartItem = existingCartItems.find(item => item._id === product._id && item.size === selectedSize);
+        
+        if (existingCartItem) {
+            // If it exists, update the quantity
+            existingCartItem.quantity += 1;
+        } else {
+            // If it doesn't exist, create a new cart item
+            const cartItem = {
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                images: product.images,
+                size: sizeObject.size,
+                sizeId: sizeObject._id,
+                quantity: 1
+            };
+            existingCartItems.push(cartItem);
+        }
     
         // Update the cart in local storage
         localStorage.setItem('cartItems', JSON.stringify(existingCartItems));
         
+        // Update the counter in local storage
+        const cartItemCount = existingCartItems.reduce((total, item) => total + item.quantity, 0);
+        localStorage.setItem('cartItemCount', cartItemCount);
+        
         // Update state to reflect changes
         setCartItems(existingCartItems);
+        const handleOpenSizeChart = () => {
+            setOpenSizeChart(true);
+        };
+    
+        const handleCloseSizeChart = () => {
+            setOpenSizeChart(false);
+        };
+    
+        
+        // Reset the selected size
+        setSelectedSize({});
     };
 
     const settings = {
@@ -146,7 +174,8 @@ const ProductDisplay = ({ products }) => {
         slidesToShow: 1,
         slidesToScroll: 1,
         nextArrow: <></>,
-        prevArrow: <></>,
+        
+       
         beforeChange: (current, next) => setCurrentImageIndex(next),
     };
 
@@ -158,7 +187,7 @@ const ProductDisplay = ({ products }) => {
                         const { ref, inView } = useInView({ triggerOnce: true });
 
                         return (
-                            <ItemStyled item xs={12} sm={6} md={3} key={index}>
+                            <ItemStyled item xs={12} sm={7} md={3} key={index}>
                                 <motion.div
                                     ref={ref}
                                     whileHover={{ scale: 1.05 }}
@@ -182,7 +211,7 @@ const ProductDisplay = ({ products }) => {
                                         <Box>
                                             <Typography variant="body2">בחר מידה:</Typography>
                                             <div style={{ display: 'flex', width: '100%' }}>
-                                                {['S', 'M', 'L'].map((size) => {
+                                                {['XS','S', 'M', 'L'].map((size) => {
                                                     const sizeInfo = product.sizes.find(s => s.size === size);
                                                     const isSoldOut = sizeInfo && sizeInfo.quantity === 0;
 
@@ -218,12 +247,13 @@ const ProductDisplay = ({ products }) => {
                         );
                     })}
                 </ContainerStyled>
+                
                 <Dialog open={open} onClose={handleClose}>
                     <Box position="relative">
                         {currentProductImages.length > 1 ? (
                             <Slider {...settings}>
                                 {currentProductImages.map((image, index) => (
-                                    <div key={image}>
+                                    <div key={image} >
                                         <DialogImage src={image} alt={`Product Image ${index}`} />
                                     </div>
                                 ))}
@@ -239,6 +269,7 @@ const ProductDisplay = ({ products }) => {
                     </Box>
                 </Dialog>
             </Box>
+            
         </motion.div>
     );
 };

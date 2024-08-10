@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from '@emotion/styled';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, Typography, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import ProductDisplay from '../components/ProductDisplay';
+import SizeChartIcon from '@mui/icons-material/TableChart';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Root = styled(Box)(({ theme }) => ({
     position: 'relative',
@@ -76,7 +78,7 @@ function HomePage({ onAddToCart }) {
     const [showCollections, setShowCollections] = useState(false);
     const [products, setProducts] = useState([]);
     const productDisplayRef = useRef(null);
-
+    const [openSizeChart, setOpenSizeChart] = useState(false);
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -101,6 +103,14 @@ function HomePage({ onAddToCart }) {
             }
         }, 100); // Delay to allow the rendering of `ProductDisplay`
     };
+    
+    const handleOpenSizeChart = () => {
+        setOpenSizeChart(true);
+    };
+
+    const handleCloseSizeChart = () => {
+        setOpenSizeChart(false);
+    };
 
     const carouselSettings = {
         dots: false,
@@ -113,9 +123,13 @@ function HomePage({ onAddToCart }) {
     };
 
     const sampleImages = [
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722943068/background3_osayet.png',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722943068/background2_mzckxx.png',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1722943068/backgroun1_mqa1qs.png'
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_7921_msicxw.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg'
+        ,'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_1585_aiti4s.jpg'
+        
     ];
 
     return (
@@ -149,14 +163,48 @@ function HomePage({ onAddToCart }) {
                 </Slider>
             </CarouselContainer>
             {showCollections && (
-                <Box component="section" ref={productDisplayRef} sx={{ marginTop: '40px' }}>
-                    <Container maxWidth="lg">
-                        <Typography variant="h4" gutterBottom>
-                            לקולקציית מה שענבר ותמר יבחרו
-                        </Typography>
-                        <ProductDisplay products={products} onAddToCart={onAddToCart} />
-                    </Container>
-                </Box>
+           <Box component="section" ref={productDisplayRef} sx={{ marginTop: '40px' }}>
+        
+           <Container maxWidth="lg">
+               <Box display="flex" justifyContent="space-between" alignItems="center">
+                   <Typography variant="h4" alignItems="center" justifyContent="center" gutterBottom> 
+                       Bell collection
+                   </Typography>
+                   <Button 
+                       variant="contained" 
+                       startIcon={<SizeChartIcon />} 
+                       onClick={handleOpenSizeChart}
+                   >
+                       טבלת מידות
+                   </Button>
+               </Box>
+               <ProductDisplay products={products} onAddToCart={onAddToCart} />
+           </Container>
+   
+           {/* דיאלוג טבלת מידות */}
+           <Dialog open={openSizeChart} onClose={handleCloseSizeChart}>
+               <DialogTitle>
+                   טבלת מידות
+                   <IconButton
+                       aria-label="close"
+                       onClick={handleCloseSizeChart}
+                       sx={{ position: 'absolute', right: 8, top: 8 }}
+                   >
+                       <CloseIcon />
+                   </IconButton>
+               </DialogTitle>
+               <DialogContent style={{direction:'rtl'}}>
+                   {/* תוכן טבלת המידות */}
+                   <Typography>מידות (סנטימטרים):</Typography>
+                   <Typography>XS: 70-75</Typography>
+                   <Typography>S: 75-80</Typography>
+                   <Typography>M: 80-85</Typography>
+                   <Typography>L: 85-90</Typography>
+               </DialogContent>
+           </Dialog>
+           
+       </Box>
+                
             )}
         </Root>
     );

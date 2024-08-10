@@ -25,7 +25,7 @@ const CartTitle = styled(Box)(({ theme }) => ({
 const ListItemStyled = styled(ListItem)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
-    direction: 'rtl'
+    direction: 'rtl',
 }));
 
 const ListItemImage = styled('img')(({ theme }) => ({
@@ -52,9 +52,27 @@ const CartPopup = ({ open, onClose }) => {
         localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
     };
 
+    const handleIncreaseQuantity = (index) => {
+        const updatedCartItems = [...cartItems];
+        updatedCartItems[index].quantity += 1;
+        setCartItems(updatedCartItems);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+    };
+
+    const handleDecreaseQuantity = (index) => {
+        const updatedCartItems = [...cartItems];
+        if (updatedCartItems[index].quantity > 1) {
+            updatedCartItems[index].quantity -= 1;
+        } else {
+            updatedCartItems.splice(index, 1);
+        }
+        setCartItems(updatedCartItems);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+    };
+
     const handleCheckout = () => {
         navigate('/checkout', { state: { cartItems } });
-        onClose(); // Close the cart drawer after navigating to checkout
+        onClose();
     };
 
     if (!cartItems) {
@@ -81,8 +99,17 @@ const CartPopup = ({ open, onClose }) => {
                         <ListItemStyled key={index}>
                             <ListItemImage src={item.images[0]} alt={item.name} />
                             <ListItemText
-                                primary={item.name}
-                                secondary={`מחיר: ${item.price} ש"ח, מידה: ${item.size}`}
+                                primary={<Typography variant="subtitle1">{item.name}</Typography>}
+                                secondary={
+                                    <>
+                                        <Typography component="span">מחיר: {item.price} ש"ח, מידה: {item.size}</Typography>
+                                        <Box display="flex" alignItems="center" mt={1}>
+                                            <Button variant="outlined" size="small" onClick={() => handleDecreaseQuantity(index)}>-</Button>
+                                            <Typography mx={2} component="span">{item.quantity}</Typography>
+                                            <Button variant="outlined" size="small" onClick={() => handleIncreaseQuantity(index)}>+</Button>
+                                        </Box>
+                                    </>
+                                }
                             />
                             <ListItemSecondaryAction>
                                 <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFromCart(index)}>

@@ -10,7 +10,7 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
     const [productImages, setProductImages] = useState([]);
     const [productDescription, setProductDescription] = useState('');
     const [productPrice, setProductPrice] = useState('');
-    const [sizes, setSizes] = useState({ S: 0, M: 0, L: 0 });
+    const [sizes, setSizes] = useState({ XS: 0, S: 0, M: 0, L: 0 });  // עדכון כאן להוסיף XS
     const [previewImages, setPreviewImages] = useState([]);
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
                 setProductImages([]);
                 setProductDescription('');
                 setProductPrice('');
-                setSizes({ S: 0, M: 0, L: 0 });
+                setSizes({ XS: 0, S: 0, M: 0, L: 0 }); // Reset sizes with XS
                 setPreviewImages([]);
             } catch (error) {
                 console.error('Error uploading product:', error);
@@ -128,6 +128,14 @@ const UploadProductModal = ({ open, onClose, onAddProduct, editingProduct }) => 
                     />
                     <Box marginTop="20px">
                         <h4>ניהול מידות ומלאי</h4>
+                        <TextField
+                            variant="outlined"
+                            label="כמות במלאי - מידה XS"
+                            type="number"
+                            value={sizes.XS}
+                            onChange={(e) => handleSizeChange('XS', e.target.value)}
+                            margin="normal"
+                        />
                         <TextField
                             variant="outlined"
                             label="כמות במלאי - מידה S"
