@@ -21,10 +21,10 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(express.json());
+
 
 // Middleware to parse URL-encoded data
-app.use(express.urlencoded({ extended: true }));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/address', addressRoutes);
