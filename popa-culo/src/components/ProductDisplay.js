@@ -121,13 +121,18 @@ const ProductDisplay = ({ products }) => {
 
     const handleAddToCart = (product, selectedSize) => {
         const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        
+    
         // Find the selected size object
         const sizeObject = product.sizes.find(size => size.size === selectedSize);
-        
+    
+        if (!sizeObject) {
+            console.error("Selected size is undefined.");
+            return;
+        }
+    
         // Check if the item with the same product ID and size already exists in the cart
         const existingCartItem = existingCartItems.find(item => item._id === product._id && item.size === selectedSize);
-        
+    
         if (existingCartItem) {
             // If it exists, update the quantity
             existingCartItem.quantity += 1;
@@ -154,19 +159,10 @@ const ProductDisplay = ({ products }) => {
         
         // Update state to reflect changes
         setCartItems(existingCartItems);
-        const handleOpenSizeChart = () => {
-            setOpenSizeChart(true);
-        };
-    
-        const handleCloseSizeChart = () => {
-            setOpenSizeChart(false);
-        };
-    
         
         // Reset the selected size
         setSelectedSize({});
     };
-
     const settings = {
         dots: false,
         infinite: true,

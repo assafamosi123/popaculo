@@ -103,26 +103,26 @@ const CartPopup = ({ open, onClose }) => {
                 ) : (
                     cartItems.map((item, index) => (
                         <ListItemStyled key={index}>
-                            <ListItemImage src={item.images[0]} alt={item.name} />
-                            <ListItemText
-                                primary={<Typography variant="subtitle1">{item.name}</Typography>}
-                                secondary={
-                                    <>
-                                        <Typography component="span">מחיר: {item.price} ש"ח, מידה: {item.size}</Typography>
-                                        <Box display="flex" alignItems="center" mt={1}>
-                                            <Button variant="outlined" size="small" onClick={() => handleDecreaseQuantity(index)}>-</Button>
-                                            <Typography mx={2} component="span">{item.quantity}</Typography>
-                                            <Button variant="outlined" size="small" onClick={() => handleIncreaseQuantity(index)}>+</Button>
-                                        </Box>
-                                    </>
-                                }
-                            />
-                            <ListItemSecondaryAction>
-                                <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFromCart(index)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ListItemSecondaryAction>
-                        </ListItemStyled>
+    <ListItemImage src={item.images[0]} alt={item.name} />
+    <ListItemText
+        primary={<Typography variant="subtitle1">{item.name}</Typography>}
+        secondary={
+            <Typography component="div" variant="body1">
+                מחיר: {item.price} ש"ח, מידה: {item.size}
+                <Box display="flex" alignItems="center" mt={1}>
+                    <Button variant="outlined" size="small" onClick={() => handleDecreaseQuantity(index)}>-</Button>
+                    <Typography mx={2} component="span">{item.quantity}</Typography>
+                    <Button variant="outlined" size="small" onClick={() => handleIncreaseQuantity(index)}>+</Button>
+                </Box>
+            </Typography>
+        }
+    />
+    <ListItemSecondaryAction>
+        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFromCart(index)}>
+            <DeleteIcon />
+        </IconButton>
+    </ListItemSecondaryAction>
+</ListItemStyled>
                     ))
                 )}
             </List>
