@@ -6,6 +6,7 @@ import Header from './components/Header';
 import UserPopup from './components/UserPopup';
 import CheckoutPage from './pages/CheckoutPage';
 import HomePage from './pages/HomePage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 
 const App = () => {
     const [cartOpen, setCartOpen] = useState(false);
@@ -64,6 +65,7 @@ const AppContent = ({ cartOpen, setCartOpen, userPopupOpen, setUserPopupOpen, up
             />
             <Routes>
                 <Route path="/" element={<HomePage onAddToCart={handleAddToCart} />} />
+                <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
             <CartPopup open={cartOpen} onClose={() => setCartOpen(false)} cartItems={cartItems} onDeleteFromCart={handleDeleteFromCart} onCheckout={handleCheckout} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Box, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
@@ -7,7 +7,6 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import ProductDisplay from '../components/ProductDisplay';
-
 
 const Root = styled(Box)(({ theme }) => ({
     position: 'relative',
@@ -27,7 +26,6 @@ const Root = styled(Box)(({ theme }) => ({
 const Header = styled('div')(({ theme }) => ({
     zIndex: 2,
     textAlign: 'center',
-    
     margin: '30px',
 }));
 
@@ -69,15 +67,15 @@ const OverlayText = styled(Box)(({ theme }) => ({
 }));
 
 const OverlayButton = styled(Button)(({ theme }) => ({
-    marginTop: '20px', // רווח בין הכיתוב ללחצן
+    marginTop: '20px',
     zIndex: 2,
-    alignSelf: 'center', // מוודא שהלחצן יהיה מיושר במרכז מתחת לכיתוב
+    alignSelf: 'center',
 }));
 
 function HomePage({ onAddToCart }) {
     const [showCollections, setShowCollections] = useState(false);
-    const [showScrollMessage, setShowScrollMessage] = useState(false);
     const [products, setProducts] = useState([]);
+    const productDisplayRef = useRef(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -96,29 +94,13 @@ function HomePage({ onAddToCart }) {
     }, []);
 
     const handleShowCollections = () => {
-        if (showCollections) {
-            setShowScrollMessage(false);
-        } else {
-            setShowScrollMessage(true);
-            setTimeout(() => {
-                setShowScrollMessage(false);
-            }, 3000); // Hide the message after 3 seconds
-        }
-        setShowCollections(!showCollections);
-    };
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 0) {
-                setShowScrollMessage(false);
+        setShowCollections(true);
+        setTimeout(() => {
+            if (productDisplayRef.current) {
+                productDisplayRef.current.scrollIntoView({ behavior: 'smooth' });
             }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+        }, 100); // Delay to allow the rendering of `ProductDisplay`
+    };
 
     const carouselSettings = {
         dots: false,
@@ -139,24 +121,23 @@ function HomePage({ onAddToCart }) {
     return (
         <Root>
             <CarouselContainer>
-            <OverlayText>
-    <motion.div
-        initial={{ opacity: 0, y: -100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-    >
-        <Typography component="h1" variant="h2" sx={{ color: 'white', marginBottom: '10px' }}>
-            Popa Culo
-        </Typography>
-        
-        <Typography style ={{color: 'white', textAlign: 'center' , fontSize:'20px'}}>
-            hand made swimewear 
-        </Typography>
-    </motion.div>
-    <OverlayButton variant="contained" onClick={handleShowCollections}>
-        shop now
-    </OverlayButton>
-</OverlayText>
+                <OverlayText>
+                    <motion.div
+                        initial={{ opacity: 0, y: -100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 2}}
+                    >
+                        <Typography component="h1" variant="h2" sx={{ color: 'white', marginBottom: '10px' }}>
+                            Popa Culo
+                        </Typography>
+                        <Typography style={{ color: 'white', textAlign: 'center', fontSize: '20px' }}>
+                            hand made swimwear
+                        </Typography>
+                    </motion.div>
+                    <OverlayButton variant="contained" onClick={handleShowCollections}>
+                        shop now
+                    </OverlayButton>
+                </OverlayText>
                 <Slider {...carouselSettings}>
                     {sampleImages.map((src, index) => (
                         <CarouselImage
@@ -166,10 +147,9 @@ function HomePage({ onAddToCart }) {
                         />
                     ))}
                 </Slider>
-                
             </CarouselContainer>
             {showCollections && (
-                <Box component="section" sx={{ marginTop: '40px' }}>
+                <Box component="section" ref={productDisplayRef} sx={{ marginTop: '40px' }}>
                     <Container maxWidth="lg">
                         <Typography variant="h4" gutterBottom>
                             לקולקציית מה שענבר ותמר יבחרו
@@ -178,26 +158,6 @@ function HomePage({ onAddToCart }) {
                     </Container>
                 </Box>
             )}
-            {showScrollMessage && (
-    <motion.div
-        initial={{ opacity: 0, y: 1 }}
-        animate={{ opacity: 1, y: 3 }}
-        transition={{ duration: 0.5 }}
-        style={{
-            position: 'fixed',
-            top: '80%',
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            padding: '10px 20px',
-            borderRadius: '10px',
-            color: '#fff',
-            zIndex: 1000,  // Higher z-index to ensure it's on top
-        
-            // Ensures it doesn’t interfere with other interactions
-        }}
-    >
-        Scroll down to see the collection!
-    </motion.div>
-)}
         </Root>
     );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -35,13 +35,28 @@ const ListItemImage = styled('img')(({ theme }) => ({
     objectFit: 'cover',
 }));
 
-const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
+const CartPopup = ({ open, onClose }) => {
+    const [cartItems, setCartItems] = useState([]);
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        setCartItems(storedCartItems);
+    }, [open]);
+
+    const handleDeleteFromCart = (index) => {
+        const updatedCartItems = [...cartItems];
+        updatedCartItems.splice(index, 1);
+        setCartItems(updatedCartItems);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+    };
 
     const handleCheckout = () => {
         navigate('/checkout', { state: { cartItems } });
-        onClose(); // סגירת העגלה אחרי הניווט
+        onClose(); // Close the cart drawer after navigating to checkout
     };
+
     if (!cartItems) {
         return null;
     }
@@ -70,7 +85,7 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                                 secondary={`מחיר: ${item.price} ש"ח, מידה: ${item.size}`}
                             />
                             <ListItemSecondaryAction>
-                                <IconButton edge="end" aria-label="delete" onClick={() => onDeleteFromCart(index)}>
+                                <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFromCart(index)}>
                                     <DeleteIcon />
                                 </IconButton>
                             </ListItemSecondaryAction>
@@ -84,8 +99,8 @@ const CartPopup = ({ open, onClose, cartItems, onDeleteFromCart }) => {
                     סה"כ: {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)} ש"ח
                 </Typography>
                 <Button variant="contained" color="primary" fullWidth style={{ marginTop: '16px' }} 
-                 onClick={handleCheckout}>
-                   לתשלום
+                    onClick={handleCheckout}>
+                    לתשלום
                 </Button>
             </Box>
         </DrawerPaper>

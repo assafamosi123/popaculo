@@ -12,20 +12,16 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import soldOutIcon from '../assets/SOLDOUT.png';
 
-
-
 const ContainerStyled = styled(Grid)({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    
 });
 
 const ItemStyled = styled(Grid)({
     marginBottom: '50px',
     display: 'block',
     flexDirection: 'column',
-    
 });
 
 const ProductCard = styled(Box)({
@@ -33,7 +29,7 @@ const ProductCard = styled(Box)({
     boxShadow: '0 17px 8px rgba(0,0,0,0.1)',
     borderRadius: '8px',
     backgroundColor: '#fff',
-    border : '5px',
+    border: '5px',
 });
 
 const ProductImage = styled('img')({
@@ -55,7 +51,6 @@ const ButtonGroup = styled(Box)({
     marginTop: '16px',
     display: 'flex',
     justifyContent: 'center',
-    
 });
 
 const SliderCounter = styled(Typography)({
@@ -80,7 +75,7 @@ const SoldOutIcon = styled('img')(({ theme }) => ({
     height: '60px',
     transform: 'translate(-50%, -50%) rotate(-30deg)',
     opacity: 0.7,
-    pointerEvents: 'none', // This makes sure the icon doesn't block button interactions
+    pointerEvents: 'none',
 }));
 
 const SizeButton = styled(Button)(({ theme }) => ({
@@ -88,11 +83,11 @@ const SizeButton = styled(Button)(({ theme }) => ({
     flex: 1,
     direction: 'ltr',
     backgroundColor: '#b78383',
-    position: 'relative', // Important for positioning the SoldOutIcon absolutely within the button
+    position: 'relative',
 }));
-
-const ProductDisplay = ({ products, onAddToCart }) => {
+const ProductDisplay = ({ products }) => {
     const [selectedSize, setSelectedSize] = useState({});
+    const [cartItems, setCartItems] = useState(() => JSON.parse(localStorage.getItem('cartItems')) || []);
     const [open, setOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [currentProductImages, setCurrentProductImages] = useState([]);
@@ -112,6 +107,36 @@ const ProductDisplay = ({ products, onAddToCart }) => {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleAddToCart = (product, selectedSize) => {
+        const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    
+        // Find the selected size object
+        const sizeObject = product.sizes.find(size => size.size === selectedSize);
+       
+        console.log(`Product added to cart: ${product.name}, Size: ${selectedSize}` );
+        console.log(sizeObject.quantity);
+    
+        // Create a cart item with product details, size, and quantity
+        const cartItem = {
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            images: product.images,
+            size: sizeObject.size,  // Added size
+            sizeId: sizeObject._id,  // Added sizeId
+            quantity: 1// Default quantity
+        };
+    
+        // Add to cart items
+        existingCartItems.push(cartItem);
+    
+        // Update the cart in local storage
+        localStorage.setItem('cartItems', JSON.stringify(existingCartItems));
+        
+        // Update state to reflect changes
+        setCartItems(existingCartItems);
     };
 
     const settings = {
@@ -165,7 +190,6 @@ const ProductDisplay = ({ products, onAddToCart }) => {
                                                         <SizeButton
                                                             key={size}
                                                             variant={selectedSize[index] === size ? 'contained' : 'outline='}
-                                                        
                                                             onClick={() => handleSizeChange(index, size)}
                                                             disabled={isSoldOut}
                                                         >
@@ -183,7 +207,7 @@ const ProductDisplay = ({ products, onAddToCart }) => {
                                         <Button
                                             variant="contained"
                                             color="primary"
-                                            onClick={() => onAddToCart(product, selectedSize[index])}
+                                            onClick={() => handleAddToCart(product, selectedSize[index])}
                                             disabled={!selectedSize[index]}
                                         >
                                             הוסף לסל
