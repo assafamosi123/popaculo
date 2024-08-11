@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -72,10 +72,11 @@ const FullScreenDialog = styled(Dialog)({
 });
 const DialogImage = styled('img')({
     width: '100%',
-
+    objectFit:'cover',
     maxHeight: '100vh', // מגביל את גובה התמונה לגובה המסך
     // מבטיח שהתמונה תותאם לגבולות המסך מבלי לחתו אותה
     borderRadius: '12px',
+    objectPosition:'center',
 });
 const SoldOutIcon = styled('img')(({ theme }) => ({
     position: 'absolute',
@@ -96,6 +97,7 @@ const SizeButton = styled(Button)(({ theme }) => ({
     position: 'relative',
 }));
 const ProductDisplay = ({ products }) => {
+    const [cartItemCount, setCartItemCount] = useState(0);
     const [selectedSize, setSelectedSize] = useState({});
     const [cartItems, setCartItems] = useState(() => JSON.parse(localStorage.getItem('cartItems')) || []);
     const [open, setOpen] = useState(false);
@@ -166,6 +168,7 @@ const ProductDisplay = ({ products }) => {
         
         // Reset the selected size
         setSelectedSize({});
+        
     };
     const settings = {
         dots: false,
@@ -174,6 +177,7 @@ const ProductDisplay = ({ products }) => {
         slidesToShow: 1,
         slidesToScroll: 1,
         nextArrow: <></>,
+        adaptiveHeight: true,
         
        
         beforeChange: (current, next) => setCurrentImageIndex(next),
@@ -197,13 +201,26 @@ const ProductDisplay = ({ products }) => {
                                     transition={{ duration: 0.5, ease: "easeOut" }}
                                     as={ProductCard}
                                 >
-                                    {product.images && product.images.length > 0 && (
-                                        <ProductImage
-                                            src={product.images[0]}
-                                            alt={`Product ${index} Main Image`}
-                                            onClick={() => handleImageClick(product.images, 0)}
-                                        />
-                                    )}
+                                    <Box style={{ position: 'relative' }}>
+    <img
+        src={product.images[0]}
+        alt={`Product ${index} Main Image`}
+        onClick={() => handleImageClick(product.images, 0)}
+        style={{ width: '100%', cursor: 'pointer' }}
+    />
+    <Box style={{
+        position: 'absolute',
+        bottom: '8px',
+        right: '8px',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        color: 'white',
+        padding: '2px 6px',
+        borderRadius: '10px',
+        fontSize: '15px',
+    }}>
+        {`1/${product.images.length}`}
+    </Box>
+</Box>
                                     <ProductInfo>
                                         <Typography variant="h6">{product.name}</Typography>
                                         <Typography variant="body2" color="textSecondary">{product.description}</Typography>

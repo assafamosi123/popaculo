@@ -112,10 +112,7 @@ const CheckoutPage = () => {
         const itemQuantity = parseInt(item.quantity) || 1;  // Ensure item.quantity is a valid number
         return acc + itemPrice * itemQuantity;
     }, 0);
-    cartItems.forEach(item => {
-        console.log(`Updating product: ${item.name}, ID: ${item._id}, Size ID: ${item.sizeId}, Quantity ordered: ${item.quantity}`);
-    });
-    console.log(totalPrice);
+    
     const discountedPrice = (totalPrice - (totalPrice * discount)).toFixed(2);
     const finalPrice = (parseFloat(discountedPrice) + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2);
     return (
@@ -250,13 +247,12 @@ const CheckoutPage = () => {
                             }}
                             onApprove={(data, actions) => {
                                 return actions.order.capture().then(details => {
-                                    alert('תשלום הצליח! תודה ' + details.payer.name.given_name);
                                     handleOrderSubmit();
                                 });
                             }}
                             onError={(err) => {
                                 console.error('Error in PayPal transaction', err);
-                                alert('שגיאה בתהליך התשלום');
+                                alert(' שגיאה בתהליך התשלוםֿ ,לא התבצע חיוב ' );
                             }}
                         />
                     </div>

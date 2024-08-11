@@ -8,7 +8,7 @@ const addProduct = asyncHandler(async (req, res) => {
     const { name, description, price, sizes } = req.body;
     const images = req.files.map(file => file.path);
 
-    console.log('Received sizes:', sizes);
+    
 
     let parsedSizes;
     try {
