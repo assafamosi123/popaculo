@@ -89,8 +89,8 @@ const OverlayButton = styled(Button)(({ theme }) => ({
 }));
 
 function HomePage({ onAddToCart }) {
-    const [showCollections, setShowCollections] = useState(false);
     const [products, setProducts] = useState([]);
+    const [showCollections, setShowCollections] = useState(false);
     const productDisplayRef = useRef(null);
     const [openSizeChart, setOpenSizeChart] = useState(false);
 
@@ -116,7 +116,7 @@ function HomePage({ onAddToCart }) {
             if (productDisplayRef.current) {
                 productDisplayRef.current.scrollIntoView({ behavior: 'smooth' });
             }
-        }, 100); // Delay to allow the rendering of `ProductDisplay`
+        }, 100);
     };
     
     const handleOpenSizeChart = () => {
@@ -131,23 +131,21 @@ function HomePage({ onAddToCart }) {
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
-     'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg'
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg'
     ];
 
     const mobileImages = [
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_7921_msicxw.jpg',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg'
-        ,'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_1585_aiti4s.jpg'
-        
     ];
-
 
     const carouselSettings = {
         dots: false,
-        infinite: true ,
+        infinite: true,
         speed: 1000,
         slidesToShow: 1,
         slidesToScroll: 1,
@@ -162,7 +160,7 @@ function HomePage({ onAddToCart }) {
                     <motion.div
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 2}}
+                        transition={{ duration: 2 }}
                     >
                         <Typography component="h1" variant="h2" sx={{ color: 'white', marginBottom: '10px' }}>
                             Popa Culo
@@ -175,9 +173,9 @@ function HomePage({ onAddToCart }) {
                         shop now
                     </OverlayButton>
                 </OverlayText>
-              
-                    {/* Desktop Images */}
-                    <div className="desktop-carousel">
+
+                {/* Desktop Images */}
+                <div className="desktop-carousel">
                     <Slider {...carouselSettings}>
                         {desktopImages.map((src, index) => (
                             <CarouselImage
@@ -186,12 +184,11 @@ function HomePage({ onAddToCart }) {
                                 alt={`Desktop Image ${index}`}
                             />
                         ))}
-                        </Slider>
-                    </div>
-                    
-                  
-                    {/* Mobile Images */}
-                    <div className="mobile-carousel">
+                    </Slider>
+                </div>
+
+                {/* Mobile Images */}
+                <div className="mobile-carousel">
                     <Slider {...carouselSettings}>
                         {mobileImages.map((src, index) => (
                             <CarouselImage
@@ -200,56 +197,53 @@ function HomePage({ onAddToCart }) {
                                 alt={`Mobile Image ${index}`}
                             />
                         ))}
-                        </Slider>
-                    </div>
-                
+                    </Slider>
+                </div>
             </CarouselContainer>
-            {showCollections && (
-           <Box component="section" ref={productDisplayRef} sx={{ marginTop: '40px' }}>
-        
-           <Container maxWidth="lg">
-               <Box display="flex" justifyContent="space-between" alignItems="center">
-                   <Typography variant="h4" alignItems="center" justifyContent="center" gutterBottom> 
-                       Bell collection
-                   </Typography>
-                   <Button 
-                       variant="contained" 
-                       startIcon={<SizeChartIcon />} 
-                       onClick={handleOpenSizeChart}
-                   >
-                       טבלת מידות
-                   </Button>
-               </Box>
-               <ProductDisplay products={products} onAddToCart={onAddToCart} />
-           </Container>
-   
-           {/* דיאלוג טבלת מידות */}
-           <Dialog open={openSizeChart} onClose={handleCloseSizeChart}>
-               <DialogTitle>
-                   טבלת מידות
-                   <IconButton
-                       aria-label="close"
-                       onClick={handleCloseSizeChart}
-                       sx={{ position: 'absolute', right: 8, top: 8 }}
-                   >
-                       <CloseIcon />
-                   </IconButton>
-               </DialogTitle>
-               <DialogContent style={{direction:'rtl'}}>
-                   {/* תוכן טבלת המידות */}
-                   <Typography>מידות (סנטימטרים):</Typography>
-                   <Typography>XS: 70-75</Typography>
-                   <Typography>S: 75-80</Typography>
-                   <Typography>M: 80-85</Typography>
-                   <Typography>L: 85-90</Typography>
-               </DialogContent>
-           </Dialog>
-           
-       </Box>
-                
+
+            {/* Show collection only when products are loaded */}
+            {showCollections && products.length > 0 && (
+                <Box component="section" ref={productDisplayRef} sx={{ marginTop: '40px' }}>
+                    <Container maxWidth="lg">
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Typography variant="h4" alignItems="center" justifyContent="center" gutterBottom>
+                                Bell collection
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                startIcon={<SizeChartIcon />}
+                                onClick={handleOpenSizeChart}
+                            >
+                                טבלת מידות
+                            </Button>
+                        </Box>
+                        <ProductDisplay products={products} onAddToCart={onAddToCart} />
+                    </Container>
+
+                    {/* דיאלוג טבלת מידות */}
+                    <Dialog open={openSizeChart} onClose={handleCloseSizeChart}>
+                        <DialogTitle>
+                            טבלת מידות
+                            <IconButton
+                                aria-label="close"
+                                onClick={handleCloseSizeChart}
+                                sx={{ position: 'absolute', right: 8, top: 8 }}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </DialogTitle>
+                        <DialogContent style={{ direction: 'rtl' }}>
+                            {/* תוכן טבלת המידות */}
+                            <Typography>מידות (סנטימטרים):</Typography>
+                            <Typography>XS: 70-75</Typography>
+                            <Typography>S: 75-80</Typography>
+                            <Typography>M: 80-85</Typography>
+                            <Typography>L: 85-90</Typography>
+                            </DialogContent>
+                    </Dialog>
+                </Box>
             )}
         </Root>
     );
 }
-
 export default HomePage;

@@ -104,6 +104,10 @@ const ProductDisplay = ({ products }) => {
     const { scrollY } = useScroll();
     const parallaxEffect = useTransform(scrollY, [0, 300], [0, 2000]);
     const [openSizeChart, setOpenSizeChart] = useState(false);
+
+    // Place the useInView hook here, ensuring it is called consistently
+    const refsArray = products.map(() => useInView({ triggerOnce: true }));
+    
     const handleSizeChange = (index, size) => {
         setSelectedSize({ ...selectedSize, [index]: size });
     };
@@ -180,7 +184,7 @@ const ProductDisplay = ({ products }) => {
             <Box sx={{ mt: '2rem' }}>
                 <ContainerStyled container spacing={2}>
                     {products.map((product, index) => {
-                        const { ref, inView } = useInView({ triggerOnce: true });
+                        const { ref, inView } = refsArray[index];
 
                         return (
                             <ItemStyled item xs={12} sm={7} md={3} key={index}>
