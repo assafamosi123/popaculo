@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 const CheckoutPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [deliveryMethod, setDeliveryMethod] = useState('delivery');
     const [newAddress, setNewAddress] = useState({
@@ -47,6 +48,7 @@ const CheckoutPage = () => {
             [name]: value
         });
     };
+    
 
     const handlePromoCodeApply = () => {
         if (promoCode === validPromoCode) {
@@ -232,29 +234,37 @@ const CheckoutPage = () => {
                                 </span>
                             }
                         />
+                        {isLoading && (
+    <div className="loading-overlay">
+        <div className="spinner">...אייקון טעינה...</div>
+    </div>
+)}
 
-                        <PayPalButtons
-                            style={{ layout: 'vertical' }}
-                            disabled={!isTermsChecked}  // Disable PayPal button if terms are not accepted
-                            createOrder={(data, actions) => {
-                                return actions.order.create({
-                                    purchase_units: [{
-                                        amount: {
-                                            value: finalPrice
-                                        }
-                                    }]
-                                });
-                            }}
-                            onApprove={(data, actions) => {
-                                return actions.order.capture().then(details => {
-                                    handleOrderSubmit();
-                                });
-                            }}
-                            onError={(err) => {
-                                console.error('Error in PayPal transaction', err);
-                                alert(' שגיאה בתהליך התשלוםֿ ,לא התבצע חיוב ' );
-                            }}
-                        />
+<PayPalButtons
+    style={{ layout: 'vertical' }}
+    disabled={!isTermsChecked}  // Disable PayPal button if terms are not accepted
+    createOrder={(data, actions) => {
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: finalPrice
+                }
+            }]
+        });
+    }}
+    onApprove={(data, actions) => {
+        setIsLoading(true); // התחלת טעינה לאחר אישור התשלום
+        return actions.order.capture().then(details => {
+            handleOrderSubmit();
+        }).finally(() => {
+            setIsLoading(false); // הפסקת טעינה לאחר סיום ביצוע ההזמנה
+        });
+    }}
+    onError={(err) => {
+        console.error('Error in PayPal transaction', err);
+        alert('שגיאה בתהליך התשלום, לא התבצע חיוב');
+    }}
+/>
                     </div>
                 </PayPalScriptProvider>
             )}

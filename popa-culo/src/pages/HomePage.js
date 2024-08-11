@@ -209,13 +209,13 @@ function HomePage({ onAddToCart }) {
                             <Typography variant="h4" alignItems="center" justifyContent="center" gutterBottom>
                                 Bell collection
                             </Typography>
-                            <Button
+                           {/* <Button
                                 variant="contained"
                                 startIcon={<SizeChartIcon />}
                                 onClick={handleOpenSizeChart}
                             >
                                 טבלת מידות
-                            </Button>
+                            </Button>*/}
                         </Box>
                         <ProductDisplay products={products} onAddToCart={onAddToCart} />
                     </Container>
