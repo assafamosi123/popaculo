@@ -256,6 +256,7 @@ const CheckoutPage = () => {
         setIsLoading(true); // התחלת טעינה לאחר אישור התשלום
         return actions.order.capture().then(details => {
             handleOrderSubmit();
+            alert("הזמנה הושלמה אנא המתן לכמה שניות למעבר הדף לאישור התשלום ");
         }).finally(() => {
             setIsLoading(false); // הפסקת טעינה לאחר סיום ביצוע ההזמנה
         });
