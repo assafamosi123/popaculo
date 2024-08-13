@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Checkbox, FormControlLabel, Select, MenuItem, InputLabel, FormControl, Modal, Box, Typography } from '@mui/material';
-import './CheckoutStyles.css';
+import { Button, Checkbox, FormControlLabel, Select, MenuItem, FormControl, Modal, Box, Typography } from '@mui/material';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-
-
+import './CheckoutStyles.css';
 const CheckoutPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -29,9 +27,15 @@ const CheckoutPage = () => {
     const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState(location.state?.cartItems || JSON.parse(localStorage.getItem('cartItems')) || []);
-    
-
-    const validPromoCode = 'popaculo10';
+    const finalPriceRef = useRef(0);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewAddress({
+            ...newAddress,
+            [name]: value
+        });
+    };
+const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
     const deliveryFee = 30;
 
     useEffect(() => {
@@ -41,14 +45,23 @@ const CheckoutPage = () => {
         }
     }, [location.state]);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewAddress({
-            ...newAddress,
-            [name]: value
-        });
-    };
+    const calculateFinalPrice = () => {
+        const totalPrice = cartItems.reduce((acc, item) => {
+            const itemPrice = parseFloat(item.price) || 0;
+            const itemQuantity = parseInt(item.quantity) || 1;
+            return acc + itemPrice * itemQuantity;
+        }, 0);
     
+        const discountedPrice = (totalPrice - (totalPrice * discount)).toFixed(2);
+        const final = (parseFloat(discountedPrice) + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2);
+
+        finalPriceRef.current = final;
+        return final;
+    };
+
+    useEffect(() => {
+        calculateFinalPrice(); // חישוב המחיר הסופי כשמשהו משתנה
+    }, [cartItems, discount, deliveryMethod]);
 
     const handlePromoCodeApply = () => {
         if (promoCode === validPromoCode) {
@@ -62,7 +75,6 @@ const CheckoutPage = () => {
 
     const handleAddAddress = () => {
         localStorage.setItem('userAddress', JSON.stringify(newAddress));
-       
         setCurrentStep(2);
     };
 
@@ -75,19 +87,17 @@ const CheckoutPage = () => {
 
     const handleOrderSubmit = () => {
         const storedAddress = JSON.parse(localStorage.getItem('userAddress'));
-        const orderNumber = uuidv4(); // יצירת מספר הזמנה ייחודי
+        const orderNumber = uuidv4(); 
     
         axios.post(`${process.env.REACT_APP_SERVER}/api/send-order-email`, {
             address: storedAddress,
             cartItems,
             deliveryMethod,
-            orderNumber, // שליחת מספר ההזמנה לשרת
+            orderNumber,
         })
         .then(response => {
-            // מעבר לעמוד אישור הזמנה עם פרטי ההזמנה ומספר ההזמנה
             navigate('/order-confirmation', { state: { orderNumber, cartItems, storedAddress } });
     
-            // עדכון הסטוק לאחר שליחת האימייל
             axios.post(`${process.env.REACT_APP_SERVER}/api/products/update-stock`, {
                 cartItems: cartItems.map(item => ({
                     productId: item._id,
@@ -96,7 +106,6 @@ const CheckoutPage = () => {
                 }))
             })
             .then(() => {
-                // ניקוי העגלה ופרטי הכתובת מה-localStorage
                 localStorage.removeItem('cartItems');
                 localStorage.removeItem('userAddress');
             })
@@ -109,14 +118,7 @@ const CheckoutPage = () => {
             alert('שגיאה בשליחת ההזמנה');
         });
     };
-    const totalPrice = cartItems.reduce((acc, item) => {
-        const itemPrice = parseFloat(item.price) || 0;  // Ensure item.price is a valid number
-        const itemQuantity = parseInt(item.quantity) || 1;  // Ensure item.quantity is a valid number
-        return acc + itemPrice * itemQuantity;
-    }, 0);
-    
-    const discountedPrice = (totalPrice - (totalPrice * discount)).toFixed(2);
-    const finalPrice = (parseFloat(discountedPrice) + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2);
+
     return (
         <div className="checkout-page" style={{direction:'rtl'}}>
             <header className="checkout-header">
@@ -180,74 +182,75 @@ const CheckoutPage = () => {
                     </div>
                 )}
 
-                {currentStep === 3 && (
-                    <PayPalScriptProvider options={{ "client-id": "ASy1080U8X4oN9b6-Xswql6HVtWkyG0a4_mXHCnSB__Rx3OOz2YLfOL_3nxPz7hgA-voqLKocxSGqcnt", currency: "ILS" }}>
-                        <div className="section">
-                            <h6>סקירת הזמנה</h6>
-                            <ul className="cart-items">
-                                {cartItems.map((item, index) => (
-                                    <li key={index}>
-                                        <img src={item.images[0]} alt={item.name} />
-                                        <div className="product-details">
-                                            <span>{item.name}</span>
-                                            <span>{item.size}</span>
-                                            <span>{item.price} ש"ח</span>
-                                            <span>כמות: {item.quantity}</span>
-                                        </div>
-                                        <Button onClick={() => handleRemoveItem(index)}>מחק</Button>
-                                    </li>
-                                ))}
-                            </ul>
-                            <div className="total-price-breakdown">
-                                <div className="breakdown-item">
-                                    <span>סה"כ עבור המוצרים:</span>
-                                    <span>{discountedPrice} ש"ח</span>
-                                </div>
-                                {deliveryMethod === 'delivery' && (
-                                    <div className="breakdown-item">
-                                        <span>דמי משלוח:</span>
-                                        <span>30 ש"ח</span>
-                                    </div>
-                                )}
-                                <div className="promo-code">
-                                <input
-                                    type="text"
-                                    placeholder="הכנס קוד קופון"
-                                    value={promoCode}
-                                    onChange={(e) => setPromoCode(e.target.value)}
-                                />
-                                <Button variant="contained" onClick={handlePromoCodeApply}>החל</Button>
-                            </div>
-                            <div className="breakdown-item total">
-                                <span>סה"כ לתשלום:</span>
-                                <span>{finalPrice} ש"ח</span>
-                            </div>
+{currentStep === 3 && (
+    <PayPalScriptProvider options={{ "client-id": "ASy1080U8X4oN9b6-Xswql6HVtWkyG0a4_mXHCnSB__Rx3OOz2YLfOL_3nxPz7hgA-voqLKocxSGqcnt", currency: "ILS" }}>
+        <div className="section">
+            <h6>סקירת הזמנה</h6>
+            <ul className="cart-items">
+                {cartItems.map((item, index) => (
+                    <li key={index}>
+                        <img src={item.images[0]} alt={item.name} />
+                        <div className="product-details">
+                            <span>{item.name}</span>
+                            <span>{item.size}</span>
+                            <span>{item.price} ש"ח</span>
+                            <span>כמות: {item.quantity}</span>
                         </div>
+                        <Button onClick={() => handleRemoveItem(index)}>מחק</Button>
+                    </li>
+                ))}
+            </ul>
+            <div className="total-price-breakdown">
+                <div className="breakdown-item">
+                    <span>סה"כ עבור המוצרים:</span>
+                    <span>{calculateFinalPrice()} ש"ח</span> {/* שימוש בפונקציה לחישוב המחיר הסופי */}
+                </div>
+                {deliveryMethod === 'delivery' && (
+                    <div className="breakdown-item">
+                        <span>דמי משלוח:</span>
+                        <span>{deliveryFee} ש"ח</span>
+                    </div>
+                )}
+                <div className="promo-code">
+                <input
+                    type="text"
+                    placeholder="הכנס קוד קופון"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                />
+                <Button variant="contained" onClick={handlePromoCodeApply}>החל</Button>
+            </div>
+            <div className="breakdown-item total">
+                <span>סה"כ לתשלום:</span>
+                <span>{finalPriceRef.current} ש"ח</span> {/* שימוש ב-finalPriceRef */}
+            </div>
+        </div>
 
-                        <FormControlLabel
-                            control={
-                                <Checkbox checked={isTermsChecked} onChange={(e) => setIsTermsChecked(e.target.checked)} />
-                            }
-                            label={
-                                <span>
-                                    אני מאשר/ת את <a href="#" onClick={() => setIsModalOpen(true)}>התקנון ותנאי השימוש</a>
-                                </span>
-                            }
-                        />
-                        {isLoading && (
-    <div className="loading-overlay">
-        <div className="spinner">...אייקון טעינה...</div>
-    </div>
+        <FormControlLabel
+            control={
+                <Checkbox checked={isTermsChecked} onChange={(e) => setIsTermsChecked(e.target.checked)} />
+            }
+            label={
+                <span>
+                    אני מאשר/ת את <a href="#" onClick={() => setIsModalOpen(true)}>התקנון ותנאי השימוש</a>
+                </span>
+            }
+        />
+        {isLoading && (
+<div className="loading-overlay">
+    <div className="spinner">...אייקון טעינה...</div>
+</div>
 )}
 
 <PayPalButtons
     style={{ layout: 'vertical' }}
     disabled={!isTermsChecked}  // Disable PayPal button if terms are not accepted
     createOrder={(data, actions) => {
+        const finalPriceForPayPal = finalPriceRef.current;
         return actions.order.create({
             purchase_units: [{
                 amount: {
-                    value: finalPrice
+                    value: finalPriceForPayPal
                 }
             }]
         });
@@ -266,61 +269,61 @@ const CheckoutPage = () => {
         alert('שגיאה בתהליך התשלום, לא התבצע חיוב');
     }}
 />
-                    </div>
-                </PayPalScriptProvider>
-            )}
+        </div>
+    </PayPalScriptProvider>
+)}
 
 <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-    <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '90%',
-        maxHeight: '90%',
-        backgroundColor: 'background.paper',
-        padding: 4,
-        overflowY: 'auto', // מאפשר גלילה אנכית אם התוכן חורג מהגובה
-        borderRadius: '8px',
-        boxShadow: 24,
-        outline: 'none',
-        direction : 'rtl',
-    }}>
-        <Typography variant="h6" gutterBottom>
-            תקנון ותנאי שימוש
-        </Typography>
-        <Typography variant="body1" paragraph>
-            ברוכים הבאים לחנות הבגדי ים שלנו. אנו מבקשים לקרוא בעיון את התקנון ותנאי השימוש לפני רכישת מוצר מהחנות. עצם השימוש באתר ורכישת מוצרים מהווה הסכמה לתנאים אלו.
-            <br /><br />
-            <strong>מדיניות רכישה ותשלום</strong>
-            <br />
-            כל הרכישות המתבצעות דרך האתר מאובטחות בצורה מלאה. ניתן לשלם באמצעות כרטיסי אשראי, PayPal או כל אמצעי תשלום אחר כפי שיתעדכן מעת לעת.
-            <br />
-            כל המחירים באתר כוללים מע"מ, אלא אם צוין אחרת.
-            <br /><br />
-            <strong>מדיניות משלוחים</strong>
-            <br />
-            אנו מספקים שירותי משלוח לכל חלקי הארץ, וזמן המשלוח עשוי להשתנות בהתאם למיקום הלקוח. אנו מתחייבים לעשות את מירב המאמצים כדי לספק את המוצרים במהירות האפשרית.
-            <br />
-            מרגע שהמוצר יצא לדרך, האחריות על המשלוח עוברת לשירות המשלוחים. במקרה של בעיה כלשהי, אנו נסייע ככל האפשר לפתרון הבעיה.
-            <br /><br />
-            <strong>מדיניות החזרות והחלפות</strong>
-            <br />
-            בהתאם לאופי המוצרים המוצעים בחנות (בגדי ים), לא ניתן לבצע החזרות או החלפות על מוצרים שנרכשו.
-            <br />
-            <strong>אחריות ושירות לקוחות</strong>
-            <br />
-            האחריות על המוצרים היא בהתאם לתנאים המפורטים על ידי היצרן. החנות לא תישא באחריות לנזק הנגרם כתוצאה משימוש לא נכון במוצר.
-            <br />
-            אנו זמינים לכל שאלה, בקשה או בעיה  בעמוד האינסטגרם שלנו @popaculo ונשמח לעמוד לרשותכם.
-        </Typography>
-        <Button onClick={() => setIsModalOpen(false)} variant="contained" sx={{ mt: 2 }}>
-            סגור
-        </Button>
-    </Box>
+<Box sx={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90%',
+    maxHeight: '90%',
+    backgroundColor: 'background.paper',
+    padding: 4,
+    overflowY: 'auto', // מאפשר גלילה אנכית אם התוכן חורג מהגובה
+    borderRadius: '8px',
+    boxShadow: 24,
+    outline: 'none',
+    direction : 'rtl',
+}}>
+    <Typography variant="h6" gutterBottom>
+        תקנון ותנאי שימוש
+    </Typography>
+    <Typography variant="body1" paragraph>
+        ברוכים הבאים לחנות הבגדי ים שלנו. אנו מבקשים לקרוא בעיון את התקנון ותנאי השימוש לפני רכישת מוצר מהחנות. עצם השימוש באתר ורכישת מוצרים מהווה הסכמה לתנאים אלו.
+        <br /><br />
+        <strong>מדיניות רכישה ותשלום</strong>
+        <br />
+        כל הרכישות המתבצעות דרך האתר מאובטחות בצורה מלאה. ניתן לשלם באמצעות כרטיסי אשראי, PayPal או כל אמצעי תשלום אחר כפי שיתעדכן מעת לעת.
+        <br />
+        כל המחירים באתר כוללים מע"מ, אלא אם צוין אחרת.
+        <br /><br />
+        <strong>מדיניות משלוחים</strong>
+        <br />
+        אנו מספקים שירותי משלוח לכל חלקי הארץ, וזמן המשלוח עשוי להשתנות בהתאם למיקום הלקוח. אנו מתחייבים לעשות את מירב המאמצים כדי לספק את המוצרים במהירות האפשרית.
+        <br />
+        מרגע שהמוצר יצא לדרך, האחריות על המשלוח עוברת לשירות המשלוחים. במקרה של בעיה כלשהי, אנו נסייע ככל האפשר לפתרון הבעיה.
+        <br /><br />
+        <strong>מדיניות החזרות והחלפות</strong>
+        <br />
+        בהתאם לאופי המוצרים המוצעים בחנות (בגדי ים), לא ניתן לבצע החזרות או החלפות על מוצרים שנרכשו.
+        <br />
+        <strong>אחריות ושירות לקוחות</strong>
+        <br />
+        האחריות על המוצרים היא בהתאם לתנאים המפורטים על ידי היצרן. החנות לא תישא באחריות לנזק הנגרם כתוצאה משימוש לא נכון במוצר.
+        <br />
+        אנו זמינים לכל שאלה, בקשה או בעיה  בעמוד האינסטגרם שלנו @popaculo ונשמח לעמוד לרשותכם.
+    </Typography>
+    <Button onClick={() => setIsModalOpen(false)} variant="contained" sx={{ mt: 2 }}>
+        סגור
+    </Button>
+</Box>
 </Modal>
-        </div>
     </div>
+</div>
 );
 };
 
