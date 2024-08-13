@@ -202,8 +202,7 @@ const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
             </ul>
             <div className="total-price-breakdown">
                 <div className="breakdown-item">
-                    <span>סה"כ עבור המוצרים:</span>
-                    <span>{calculateFinalPrice()} ש"ח</span> {/* שימוש בפונקציה לחישוב המחיר הסופי */}
+                
                 </div>
                 {deliveryMethod === 'delivery' && (
                     <div className="breakdown-item">
