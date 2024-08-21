@@ -36,11 +36,16 @@ const getProducts = asyncHandler(async (req, res) => {
 
 // productController.js
 async function updateStock(req, res) {
+    const { cartItems } = req.body;
+   await updatingStock(res ,cartItems); 
+    res.status(200).json({ message: 'Stock updated successfully' });
+}
+const  updatingStock = async(res,cartItems)=>{
     try {
-        const { cartItems } = req.body;
+       
 
         for (const item of cartItems) {
-            const { productId, size, quantity } = item;
+            const {   productId, size, quantity } = item;
 
             console.log('Received productId:', productId);
             console.log('Received size:', size);
@@ -78,14 +83,16 @@ async function updateStock(req, res) {
             );
         }
 
-        res.status(200).json({ message: 'Stock updated successfully' });
+       
     } catch (error) {
         console.error('Error updating stock:', error);
         res.status(500).json({ message: 'Error updating stock' });
     }
 }
+
 module.exports = {
     addProduct,
     getProducts,
-    updateStock
+    updateStock,
+    updatingStock
 };

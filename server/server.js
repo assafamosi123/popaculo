@@ -9,6 +9,8 @@ const productRoutes = require('./routes/productRoutes');
 const path = require('path');
 const addressRoutes = require('./routes/addressRoutes');
 const emailRoutes = require('./routes/emailRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const couponRoutes = require('./routes/couponRoutes');
 dotenv.config();
 
 connectDB();
@@ -24,7 +26,8 @@ app.use(morgan('dev'));
 
 
 // Middleware to parse URL-encoded data
-
+app.use('/api', couponRoutes);
+app.use('/api', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/address', addressRoutes);

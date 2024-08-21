@@ -26,6 +26,7 @@ const CheckoutPage = () => {
     const [discount, setDiscount] = useState(0);
     const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const promoCodeRef = useRef(promoCode);
     const [cartItems, setCartItems] = useState(location.state?.cartItems || JSON.parse(localStorage.getItem('cartItems')) || []);
     const finalPriceRef = useRef(0);
     const handleInputChange = (e) => {
@@ -35,7 +36,7 @@ const CheckoutPage = () => {
             [name]: value
         });
     };
-const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
+
     const deliveryFee = 30;
 
     useEffect(() => {
@@ -44,6 +45,7 @@ const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
             setCartItems(storedCartItems);
         }
     }, [location.state]);
+    
 
     const calculateFinalPrice = () => {
         const totalPrice = cartItems.reduce((acc, item) => {
@@ -58,25 +60,62 @@ const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
         finalPriceRef.current = final;
         return final;
     };
-
+    
     useEffect(() => {
         calculateFinalPrice(); // חישוב המחיר הסופי כשמשהו משתנה
     }, [cartItems, discount, deliveryMethod]);
 
-    const handlePromoCodeApply = () => {
-        if (promoCode === validPromoCode) {
-            setDiscount(0.10);
-            alert('קוד הנחה הוחל בהצלחה!');
-        } else {
-            setDiscount(0);
-            alert('קוד הנחה לא חוקי');
+    const handlePromoCodeApply = async () => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/check-promo-code`, { promoCode });
+            
+    
+            if (response.data.valid) {
+                setDiscount(response.data.discount); 
+              
+               // Apply the discount returned from the server
+                alert('קוד הנחה הוחל בהצלחה!');
+            } else {
+                setDiscount(0);
+                alert('קוד הנחה לא חוקי או פג תוקף');
+            }
+        } catch (error) {
+            console.error('Error checking promo code:', error);
+            alert('שגיאה בבדיקת קוד הנחה');
         }
     };
+    const createPayPalOrder = async (data, actions,promoCode) => {
+        try {
+            
+            const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/create-order`, {
+                cartItems,
+                promoCode:promoCodeRef.current,
+                deliveryMethod,
+            });
+
+            const { id } = response.data;
+
+            // Create the order in PayPal with the ID from the server response
+            return id;
+        } catch (error) {
+            console.error('Error creating PayPal order:', error);
+            alert('שגיאה ביצירת ההזמנה בפייפאל');
+            return actions.reject(); // Reject the order creation in case of an error
+        }
+    }
 
     const handleAddAddress = () => {
         localStorage.setItem('userAddress', JSON.stringify(newAddress));
         setCurrentStep(2);
     };
+    const promoCodeChange = (e) => {
+        setPromoCode(e.target.value); 
+       
+    }
+   
+    useEffect(() => {
+        promoCodeRef.current = promoCode;
+    }, [promoCode]);
 
     const handleRemoveItem = (index) => {
         const updatedCartItems = [...cartItems];
@@ -84,41 +123,6 @@ const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
         setCartItems(updatedCartItems);
         localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
     };
-
-    const handleOrderSubmit = () => {
-        const storedAddress = JSON.parse(localStorage.getItem('userAddress'));
-        const orderNumber = uuidv4(); 
-    
-        axios.post(`${process.env.REACT_APP_SERVER}/api/send-order-email`, {
-            address: storedAddress,
-            cartItems,
-            deliveryMethod,
-            orderNumber,
-        })
-        .then(response => {
-            navigate('/order-confirmation', { state: { orderNumber, cartItems, storedAddress } });
-    
-            axios.post(`${process.env.REACT_APP_SERVER}/api/products/update-stock`, {
-                cartItems: cartItems.map(item => ({
-                    productId: item._id,
-                    size: item.size,
-                    quantity: item.quantity
-                }))
-            })
-            .then(() => {
-                localStorage.removeItem('cartItems');
-                localStorage.removeItem('userAddress');
-            })
-            .catch(error => {
-                console.error('Error updating stock:', error);
-            });
-        })
-        .catch(error => {
-            console.error('Error sending order email:', error);
-            alert('שגיאה בשליחת ההזמנה');
-        });
-    };
-
     return (
         <div className="checkout-page" style={{direction:'rtl'}}>
             <header className="checkout-header">
@@ -215,7 +219,7 @@ const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
                     type="text"
                     placeholder="הכנס קוד קופון"
                     value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
+                    onChange={promoCodeChange}
                 />
                 <Button variant="contained" onClick={handlePromoCodeApply}>החל</Button>
             </div>
@@ -243,29 +247,35 @@ const validPromoCode = process.env.REACT_APP_VALID_PROMO_CODE;
 
 <PayPalButtons
     style={{ layout: 'vertical' }}
-    disabled={!isTermsChecked}  // Disable PayPal button if terms are not accepted
-    createOrder={(data, actions) => {
-        const finalPriceForPayPal = finalPriceRef.current;
-        return actions.order.create({
-            purchase_units: [{
-                amount: {
-                    value: finalPriceForPayPal
-                }
-            }]
-        });
+    disabled={!isTermsChecked}
+    createOrder={(data ,actions) => createPayPalOrder(data,actions, promoCode)}
+    onApprove={async (data, actions) => {
+        setIsLoading(true);
+        try {
+            const captureResponse = await actions.order.capture();
+            const orderId = data.orderID;
+
+            await axios.post(`${process.env.REACT_APP_SERVER}/api/confirm-order/${orderId}`);
+
+            alert("הזמנה הושלמה בהצלחה!");
+            navigate('/order-confirmation', { state: { orderId, cartItems, newAddress } });
+        } catch (error) {
+            console.error('Error capturing PayPal order:', error);
+            alert('שגיאה בתהליך אישור ההזמנה');
+        } finally {
+            setIsLoading(false);
+        }
     }}
-    onApprove={(data, actions) => {
-        setIsLoading(true); // התחלת טעינה לאחר אישור התשלום
-        return actions.order.capture().then(details => {
-            handleOrderSubmit();
-            alert("הזמנה הושלמה אנא המתן לכמה שניות למעבר הדף לאישור התשלום ");
-        }).finally(() => {
-            setIsLoading(false); // הפסקת טעינה לאחר סיום ביצוע ההזמנה
-        });
-    }}
-    onError={(err) => {
+    onError={async (err) => {
         console.error('Error in PayPal transaction', err);
-        alert('שגיאה בתהליך התשלום, לא התבצע חיוב');
+        alert('שגיאה בתהליך התשלום');
+
+        // Delete the order in case of an error
+        try {
+            await axios.post(`${process.env.REACT_APP_SERVER}/api/delete-order`, { orderId: data.orderID });
+        } catch (error) {
+            console.error('Error deleting order:', error);
+        }
     }}
 />
         </div>
