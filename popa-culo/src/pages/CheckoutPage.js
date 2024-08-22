@@ -117,12 +117,7 @@ const CheckoutPage = () => {
         promoCodeRef.current = promoCode;
     }, [promoCode]);
 
-    const handleRemoveItem = (index) => {
-        const updatedCartItems = [...cartItems];
-        updatedCartItems.splice(index, 1);
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-    };
+   
     return (
         <div className="checkout-page" style={{direction:'rtl'}}>
             <header className="checkout-header">
@@ -200,7 +195,6 @@ const CheckoutPage = () => {
                             <span>{item.price} ש"ח</span>
                             <span>כמות: {item.quantity}</span>
                         </div>
-                        <Button onClick={() => handleRemoveItem(index)}>מחק</Button>
                     </li>
                 ))}
             </ul>

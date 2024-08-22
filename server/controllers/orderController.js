@@ -147,7 +147,7 @@ exports.confirmOrder=async (req, res) => {
     }
     
     
-        await UpdateStock(res,orderFound.items);
+    await UpdateStock(res,orderFound.items);
     
     await Order.findByIdAndDelete(id);
    

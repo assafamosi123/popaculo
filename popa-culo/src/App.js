@@ -13,15 +13,41 @@ const App = () => {
     const [userPopupOpen, setUserPopupOpen] = useState(false);
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
+    const [cartItemCount, setCartItemCount] = useState(() => {
+        // Initialize cart item count from localStorage
+        const savedCount = localStorage.getItem('cartItemCount');
+        return savedCount ? parseInt(savedCount) : 0;
+    });
 
     const handleAddToCart = (product, size) => {
-        setCartItems([...cartItems, { ...product, size, quantity: 1 }]);
+        const newCartItems = [...cartItems];
+        const existingCartItem = newCartItems.find(item => item._id === product._id && item.size === size);
+
+        if (existingCartItem) {
+            existingCartItem.quantity += 1;
+        } else {
+            newCartItems.push({ ...product, size, quantity: 1 });
+        }
+
+        setCartItems(newCartItems);
+        const newCartItemCount = newCartItems.reduce((total, item) => total + item.quantity, 0);
+        setCartItemCount(newCartItemCount);
+        localStorage.setItem('cartItemCount', newCartItemCount);
+        localStorage.setItem('cartItems', JSON.stringify(newCartItems));
         setCartOpen(true);
     };
 
     const handleDeleteFromCart = (index) => {
         const newCartItems = cartItems.filter((_, i) => i !== index);
         setCartItems(newCartItems);
+        
+        // חישוב כמות הפריטים בעגלה לאחר מחיקת המוצר
+        const newCartItemCount = newCartItems.reduce((total, item) => total + item.quantity, 0);
+        setCartItemCount(newCartItemCount);
+        
+        // עדכון ב-localStorage
+        localStorage.setItem('cartItemCount', newCartItemCount);
+        localStorage.setItem('cartItems', JSON.stringify(newCartItems));
     };
 
     const handleAddProduct = (product) => {
@@ -31,47 +57,26 @@ const App = () => {
 
     return (
         <Router>
-            <AppContent
-                cartOpen={cartOpen}
-                setCartOpen={setCartOpen}
-                userPopupOpen={userPopupOpen}
-                setUserPopupOpen={setUserPopupOpen}
-                uploadModalOpen={uploadModalOpen}
-                setUploadModalOpen={setUploadModalOpen}
-                cartItems={cartItems}
-                handleAddToCart={handleAddToCart}
-                handleDeleteFromCart={handleDeleteFromCart}
-                handleAddProduct={handleAddProduct} // Pass the handleAddProduct function
-            />
-        </Router>
-    );
-};
-
-const AppContent = ({ cartOpen, setCartOpen, userPopupOpen, setUserPopupOpen, uploadModalOpen, setUploadModalOpen, cartItems, handleAddToCart, handleDeleteFromCart, handleAddProduct }) => {
-    const navigate = useNavigate();
-
-    const handleCheckout = () => {
-        const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-        setCartOpen(false);
-        navigate('/checkout', { state: { cartTotal } });
-    };
-
-    return (
-        <>
             <Header
                 onCartClick={() => setCartOpen(true)}
                 onUserClick={() => setUserPopupOpen(true)}
                 onUploadClick={() => setUploadModalOpen(true)}
+                cartItemCount={cartItemCount} // Pass cartItemCount to Header
             />
             <Routes>
-                <Route path="/" element={<HomePage onAddToCart={handleAddToCart} />} />
+                <Route path="/" element={<HomePage onAddToCart={handleAddToCart} setCartItemCount={setCartItemCount} />} />
                 <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
-            <CartPopup open={cartOpen} onClose={() => setCartOpen(false)} cartItems={cartItems} onDeleteFromCart={handleDeleteFromCart} onCheckout={handleCheckout} />
-         
+            <CartPopup 
+    open={cartOpen} 
+    onClose={() => setCartOpen(false)} 
+    cartItems={cartItems} 
+    onDeleteFromCart={handleDeleteFromCart} 
+    setCartItemCount={setCartItemCount}
+/>
             <UploadProductModal open={uploadModalOpen} onClose={() => setUploadModalOpen(false)} onAddProduct={handleAddProduct} />
-        </>
+        </Router>
     );
 };
 

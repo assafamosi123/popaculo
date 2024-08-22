@@ -88,7 +88,7 @@ const OverlayButton = styled(Button)(({ theme }) => ({
     alignSelf: 'center',
 }));
 
-function HomePage({ onAddToCart }) {
+function HomePage({ onAddToCart ,setCartItemCount}) {
     const [products, setProducts] = useState([]);
     const [showCollections, setShowCollections] = useState(false);
     const productDisplayRef = useRef(null);
@@ -217,7 +217,7 @@ function HomePage({ onAddToCart }) {
                                 טבלת מידות
                             </Button>*/}
                         </Box>
-                        <ProductDisplay products={products} onAddToCart={onAddToCart} />
+                        <ProductDisplay products={products} onAddToCart={onAddToCart} onUpdateCartCount={setCartItemCount}/>
                     </Container>
 
                     {/* דיאלוג טבלת מידות */}

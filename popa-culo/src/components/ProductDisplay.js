@@ -96,7 +96,7 @@ const SizeButton = styled(Button)(({ theme }) => ({
     backgroundColor: '#b78383',
     position: 'relative',
 }));
-const ProductDisplay = ({ products }) => {
+const ProductDisplay = ({ products ,onUpdateCartCount}) => {
     const [cartItemCount, setCartItemCount] = useState(0);
     const [selectedSize, setSelectedSize] = useState({});
     const [cartItems, setCartItems] = useState(() => JSON.parse(localStorage.getItem('cartItems')) || []);
@@ -128,7 +128,7 @@ const ProductDisplay = ({ products }) => {
     const handleAddToCart = (product, selectedSize) => {
         const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     
-        // Find the selected size object
+        // מציאת אובייקט המידה שנבחרה
         const sizeObject = product.sizes.find(size => size.size === selectedSize);
     
         if (!sizeObject) {
@@ -136,14 +136,14 @@ const ProductDisplay = ({ products }) => {
             return;
         }
     
-        // Check if the item with the same product ID and size already exists in the cart
+        // בדיקה אם כבר קיים בעגלה מוצר עם אותו מזהה ומידה
         const existingCartItem = existingCartItems.find(item => item._id === product._id && item.size === selectedSize);
     
         if (existingCartItem) {
-            // If it exists, update the quantity
+            // אם המוצר כבר קיים בעגלה, עדכון הכמות
             existingCartItem.quantity += 1;
         } else {
-            // If it doesn't exist, create a new cart item
+            // אם המוצר לא קיים בעגלה, יצירת מוצר חדש והוספה לעגלה
             const cartItem = {
                 _id: product._id,
                 name: product.name,
@@ -156,19 +156,22 @@ const ProductDisplay = ({ products }) => {
             existingCartItems.push(cartItem);
         }
     
-        // Update the cart in local storage
+        // עדכון העגלה ב-localStorage
         localStorage.setItem('cartItems', JSON.stringify(existingCartItems));
         
-        // Update the counter in local storage
+        // חישוב כמות הפריטים בעגלה
         const cartItemCount = existingCartItems.reduce((total, item) => total + item.quantity, 0);
-        localStorage.setItem('cartItemCount', cartItemCount);
         
-        // Update state to reflect changes
+        // עדכון כמות הפריטים בעגלה באמצעות הפונקציה שנשלחה כ-prop
+        if (typeof onUpdateCartCount === 'function') {
+            onUpdateCartCount(cartItemCount);
+        }
+    
+        // עדכון המצב המקומי כדי לשקף את השינויים
         setCartItems(existingCartItems);
-        
-        // Reset the selected size
+    
+        // איפוס המידה שנבחרה
         setSelectedSize({});
-        
     };
     const settings = {
         dots: false,

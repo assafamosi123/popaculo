@@ -34,14 +34,15 @@ const ListItemStyled = styled(ListItem)(({ theme }) => ({
 }));
 
 const ListItemImage = styled('img')(({ theme }) => ({
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     width: 80, // הגדלת גודל התמונה
     height: 80,
     objectFit: 'cover',
     borderRadius: '8px',
 }));
 
-const CartPopup = ({ open, onClose }) => {
+const CartPopup = ({ open, onClose ,setCartItemCount}) => {
     const [cartItems, setCartItems] = useState([]);
 
     const navigate = useNavigate();
@@ -52,20 +53,32 @@ const CartPopup = ({ open, onClose }) => {
     }, [open]);
 
     const handleDeleteFromCart = (index) => {
-        const updatedCartItems = [...cartItems];
-        updatedCartItems.splice(index, 1);
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-    };
+    // הסרת המוצר מהרשימה בעגלה
+    const newCartItems = cartItems.filter((_, i) => i !== index);
+    setCartItems(newCartItems);
 
-    const handleIncreaseQuantity = (index) => {
-        const updatedCartItems = [...cartItems];
-        updatedCartItems[index].quantity += 1;
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-    };
+    // חישוב כמות הפריטים בעגלה לאחר המחיקה
+    const newCartItemCount = newCartItems.reduce((total, item) => total + item.quantity, 0);
+    setCartItemCount(newCartItemCount);
 
-    const handleDecreaseQuantity = (index) => {
+    // עדכון ה-localStorage
+    localStorage.setItem('cartItemCount', newCartItemCount);
+    localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+};
+
+const handleIncreaseQuantity = (index) => {
+    const updatedCartItems = [...cartItems];
+    updatedCartItems[index].quantity += 1;
+    setCartItems(updatedCartItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+
+    const newCartItemCount = updatedCartItems.reduce((total, item) => total + item.quantity, 0);
+    setCartItemCount(newCartItemCount);
+    localStorage.setItem('cartItemCount', newCartItemCount);
+};
+
+
+     const handleDecreaseQuantity = (index) => {
         const updatedCartItems = [...cartItems];
         if (updatedCartItems[index].quantity > 1) {
             updatedCartItems[index].quantity -= 1;
@@ -74,8 +87,11 @@ const CartPopup = ({ open, onClose }) => {
         }
         setCartItems(updatedCartItems);
         localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-    };
 
+        const newCartItemCount = updatedCartItems.reduce((total, item) => total + item.quantity, 0);
+        setCartItemCount(newCartItemCount);
+        localStorage.setItem('cartItemCount', newCartItemCount);
+    };
     const handleCheckout = () => {
         navigate('/checkout', { state: { cartItems } });
         onClose();
