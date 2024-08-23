@@ -248,9 +248,12 @@ const CheckoutPage = () => {
         try {
             const captureResponse = await actions.order.capture();
             const orderId = data.orderID;
-
-            await axios.post(`${process.env.REACT_APP_SERVER}/api/confirm-order/${orderId}`);
-
+    
+            console.log('Order ID from PayPal:', orderId); // בדוק אם ה-ID מתקבל נכון
+    
+            const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/confirm-order/${orderId}`);
+            console.log('Response from confirm-order:', response.data); // בדוק מה השרת מחזיר
+    
             alert("הזמנה הושלמה בהצלחה!");
             navigate('/order-confirmation', { state: { orderId, cartItems, newAddress } });
         } catch (error) {

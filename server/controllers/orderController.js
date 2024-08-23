@@ -69,7 +69,7 @@ exports.createOrder = async (req, res) => {
         console.log('Final total price:', totalPrice.toFixed(2));  // לוג למחיר הסופי לפני שליחת הבקשה לפייפאל
 
         // יצירת הזמנה בפייפאל
-        const payPalResponse = await axios.post('https://api.paypal.com/v2/checkout/orders', {
+        const payPalResponse = await axios.post(`${process.env.PAYPAL_API}/v2/checkout/orders`, {
             intent: 'CAPTURE',
             purchase_units: [{
                 amount: {
@@ -121,51 +121,60 @@ exports.createOrder = async (req, res) => {
 
 };
 
-exports.confirmOrder=async (req, res) => {
-    try{
-    const {id} = req.params; 
-    const orderFound = await Order.findOne({id});
-    
-    if(!orderFound)
-    {
 
-        res.status(404);
-        throw new Error('Order not found');
-    }
-    const payPalResponse = await axios.get(`https://api-m.paypal.com/v2/checkout/orders/${id}`,{
-        auth: {
-            username: process.env.PAYPAL_CLIENT_ID,
-            password: process.env.PAYPAL_CLIENT_SECRET
+console.log("Request received for order confirmation...");
+exports.confirmOrder = async (req, res) => {
+    console.log("Entered confirmOrder function...");
+    try {
+        const { id } = req.params;
+
+        console.log(`Looking for order with PayPal ID: ${id}`);
+
+        // מציאת ההזמנה במאגר הנתונים לפי ה-PayPal ID
+        const orderFound = await Order.findOne({ id });
+
+        if (!orderFound) {
+            console.log(`Order with PayPal ID ${id} not found in MongoDB.`);
+            res.status(404);
+            throw new Error('Order not found in MongoDB');
         }
-    });
-    console.log(payPalResponse.data.status !=='APPROVED');
-    if(payPalResponse.data.status!=='APPROVED'){
-        res.status(400);
-        throw new Error('order not approved');
 
+        console.log('Order found:', orderFound);
 
+        // קריאה לפייפאל לוודא שההזמנה מאושרת
+        console.log('Making request to PayPal to verify order status...');
+
+        const payPalResponse = await axios.get(`${process.env.PAYPAL_API}/v2/checkout/orders/${id}`, {
+            auth: {
+                username: process.env.PAYPAL_CLIENT_ID,
+                password: process.env.PAYPAL_CLIENT_SECRET
+            }
+        });
+
+        console.log('Received response from PayPal:', payPalResponse.data);
+
+        if (payPalResponse.data.status !== 'APPROVED' && payPalResponse.data.status !== 'COMPLETED') {
+            res.status(400);
+            throw new Error(`Order status is not approved or completed. Status: ${payPalResponse.data.status}`);
+        }
+
+        console.log('Order approved. Proceeding with stock update.');
+
+        // עדכון מלאי המוצרים
+        await UpdateStock(res, orderFound.items);
+
+        console.log('Deleting the order from MongoDB.');
+
+        // מחיקת ההזמנה מהמאגר לאחר אישור ותהליך עדכון מלאי
+        await Order.findByIdAndDelete(orderFound._id);
+
+        res.status(200).json({ message: 'Order confirmed successfully' });
+    } catch (error) {
+        console.log('Error confirming order:', error.message);
+        console.error('Full error:', error); // לוג נוסף להצגת כל שגיאה שקרתה
+        res.status(400).json({ message: 'Order Failed', error: error.message });
     }
-    
-    
-    await UpdateStock(res,orderFound.items);
-    
-    await Order.findByIdAndDelete(id);
-   
-    
-
-
-    
-    res.status(200).json({message:'yoopididdo'});
-}
-catch(error){
-    console.log(error);
-    res.status(400).json({message:'Order Failed'});
-    
-}
-
-
-
-}
+};
 exports.deleteOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
