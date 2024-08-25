@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom';
 import UploadProductModal from './adminoption/UploadProductModal';
 import CartPopup from './components/CartPopup';
 import Header from './components/Header';
 import UserPopup from './components/UserPopup';
+import LoginPage from './pages/LoginPage';
 import CheckoutPage from './pages/CheckoutPage';
 import HomePage from './pages/HomePage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import AdminPage from './pages/AdminPage';
+import ProtectedPage from './components/ProtectedPage';
 
 const App = () => {
     const [cartOpen, setCartOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userPopupOpen, setUserPopupOpen] = useState(false);
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
@@ -18,6 +22,13 @@ const App = () => {
         const savedCount = localStorage.getItem('cartItemCount');
         return savedCount ? parseInt(savedCount) : 0;
     });
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsAuthenticated(true);
+        }
+    }, []);
 
     const handleAddToCart = (product, size) => {
         const newCartItems = [...cartItems];
@@ -66,6 +77,8 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<HomePage onAddToCart={handleAddToCart} setCartItemCount={setCartItemCount} />} />
                 <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+                <Route path="/login" element={<LoginPage isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/admin" element={<ProtectedPage isAuthenticated={isAuthenticated}><AdminPage/></ProtectedPage>} />
                 <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
             <CartPopup 
