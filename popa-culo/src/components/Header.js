@@ -3,25 +3,8 @@ import { AppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logowhite.png';
-import axios from 'axios';
 
 const Header = ({ onCartClick, onUserClick, onUploadClick, cartItemCount }) => {
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            axios.get(`${process.env.REACT_APP_SERVER}/api/auth/user`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-                .then(response => {
-                    setUser(response.data);
-                })
-                .catch(error => {
-                    console.log("Error fetching user:", error);
-                });
-        }
-    }, []);
 
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer }}>
