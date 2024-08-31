@@ -8,7 +8,7 @@ import Container from '@mui/material/Container';
 
 const OrderConfirmationPage = () => {
     const location = useLocation();
-    const { orderNumber } = location.state || {};
+    const { orderId } = location.state || {};
     const navigate = useNavigate();
 
     const handleBackToHome = () => {
@@ -22,7 +22,7 @@ const OrderConfirmationPage = () => {
                     ההזמנה הושלמה בהצלחה!
                 </Typography>
                 <Typography variant="h6" sx={{ marginTop: '20px', color: 'primary.main' }}>
-                    מספר ההזמנה שלך הוא: <strong>{orderNumber}</strong>
+                    מספר ההזמנה שלך הוא: <strong>{orderId}</strong>
                 </Typography>
                 <Typography variant="body1" sx={{ marginTop: '20px' }}>
                     לכל מידע נוסף מוזמנים לפנות אלינו בעמוד האינסטגרם שלנו @popaculo

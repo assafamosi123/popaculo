@@ -254,7 +254,7 @@ const CheckoutPage = () => {
             const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/confirm-order/${orderId}`);
             console.log('Response from confirm-order:', response.data); // בדוק מה השרת מחזיר
     
-            alert("הזמנה הושלמה בהצלחה!");
+            alert("הזמנה הושלמה בהצלחה אנא המתן מספר שניות למעבר לאישור ההזמנה !");
             navigate('/order-confirmation', { state: { orderId, cartItems, newAddress } });
         } catch (error) {
             console.error('Error capturing PayPal order:', error);

@@ -76,6 +76,7 @@ const App = () => {
     setCartItemCount={setCartItemCount}
 />
             <UploadProductModal open={uploadModalOpen} onClose={() => setUploadModalOpen(false)} onAddProduct={handleAddProduct} />
+            <UserPopup open={userPopupOpen} onClose={() => setUserPopupOpen(false)} />
         </Router>
     );
 };
