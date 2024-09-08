@@ -248,19 +248,31 @@ const CheckoutPage = () => {
         try {
             const captureResponse = await actions.order.capture();
             const orderId = data.orderID;
-    
+        
             console.log('Order ID from PayPal:', orderId); // בדוק אם ה-ID מתקבל נכון
     
             const response = await axios.post(`${process.env.REACT_APP_SERVER}/api/confirm-order/${orderId}`);
             console.log('Response from confirm-order:', response.data); // בדוק מה השרת מחזיר
+            
+            // After confirming the order, send the email
+            const emailResponse = await axios.post(`${process.env.REACT_APP_SERVER}/api/send-order-email`, {
+                address: newAddress,
+                cartItems,
+                deliveryMethod: 'delivery', // or 'pickup' based on user selection
+                orderNumber: orderId
+            });
+            console.log('Email response:', emailResponse.data);
     
             alert("הזמנה הושלמה בהצלחה אנא המתן מספר שניות למעבר לאישור ההזמנה !");
+            localStorage.removeItem('cartItems');
+            localStorage.removeItem('userAddress');
+            
             navigate('/order-confirmation', { state: { orderId, cartItems, newAddress } });
         } catch (error) {
-            console.error('Error capturing PayPal order:', error);
+            console.error('Error capturing PayPal order or sending email:', error);
             alert('שגיאה בתהליך אישור ההזמנה');
         } finally {
-            setIsLoading(false);
+            setIsLoading(false); 
         }
     }}
     onError={async (err) => {
