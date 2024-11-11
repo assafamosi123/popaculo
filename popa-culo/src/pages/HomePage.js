@@ -131,16 +131,18 @@ function HomePage({ onAddToCart ,setCartItemCount}) {
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg'
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1731333499/IMG_5621_z06cbe.jpg'
+       
     ];
 
     const mobileImages = [
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9152_v0txoj.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_9540_kzn6zn.jpg',
         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307921/IMG_7921_msicxw.jpg',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/1F34A466-35D6-4C24-866C-8DA7D94B812A_cllwuf.jpg',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
-        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_1585_aiti4s.jpg'
+         'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_0156_x3tnqr.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1723307920/IMG_1585_aiti4s.jpg', 
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1731333311/IMG_5626_st523p.jpg',
+        'https://res.cloudinary.com/dnuytrlyh/image/upload/v1731333311/IMG_6964_qv4sqj.jpg'
     ];
 
     const carouselSettings = {

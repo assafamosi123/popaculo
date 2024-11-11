@@ -18,7 +18,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://www.popaculo.com'],
+    origin: ['http://localhost:3000', 'https://www.popaculo.com','http://192.168.1.42:3000'],
     credentials: true
 }));
 app.use(express.json());
